@@ -1,0 +1,1951 @@
+<!DOCTYPE html>
+<!-- saved from url=(0038)https://mathsbot.com/questionGenerator -->
+<html lang="en">
+<script src="chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/content/location/location.js"
+  id="eppiocemhmnlbhjplcgkofciiegomcon"></script>
+<script src="chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/libs/extend-native-history-api.js"></script>
+<script src="chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/libs/requests.js"></script>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Jonathan Hall">
+  <link rel="icon" type="image/png" href="https://mathsbot.com/media/favicon192.png" sizes="192x192">
+  <link rel="stylesheet" href="main.css">
+  <script src="questionBank.js"></script>
+  <script src="differentiator.js"></script>
+  <script src="utilities.js"></script>
+  <script src="objectMaths.js"></script>
+  <script id="MathJax-script" async="" src="./Maths Question Generator_files/tex-mml-chtml.js"></script>
+  <meta name="description"
+    content="Fully customisable Maths Question Generator. Create up to 9 different groups of randomly generated questions, each testing a specific topic and level of difficulty.">
+  <title>Maths Question Generator</title>
+  <style>
+    .questionBox {
+      width: calc(97% / 2);
+      margin: 0.5%;
+      float: left;
+      box-sizing: border-box;
+      min-height: 30vh;
+    }
+
+    #questionsIWB {
+      background: #fff;
+    }
+
+    #totalQuestionsSelect,
+    #fontSize {
+      width: 2.5em;
+      text-align: center;
+    }
+
+    .level,
+    #columnSelect {
+      width: 2em;
+      text-align: center;
+    }
+
+    .controls h2,
+    .controls h3 {
+      margin: 0.5em;
+      padding: 0;
+    }
+
+    #answerButton,
+    #menuButton,
+    #printButton {
+      display: none;
+    }
+
+    div.adBox {
+      margin: 1em;
+      padding: 1em;
+      background: #fff;
+      text-align: center;
+    }
+
+    #topicMenu {
+      overflow: auto;
+    }
+
+    /* Numbered question list styles */
+    .question-list {
+      display: flex;
+      flex-direction: row;
+      list-style: none;
+      padding: 0.5em 1em;
+      margin: 1em auto;
+      background: #fff;
+      max-width: 100%;
+      gap: 2em;
+    }
+
+    .question-column {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .question-item {
+      padding: 0.4em 0.3em;
+      cursor: pointer;
+      break-inside: avoid;
+    }
+
+    .question-item:hover {
+      background-color: #f0f0f0;
+    }
+
+    .question-item .q-number {
+      font-weight: bold;
+      margin-right: 0.4em;
+    }
+
+    .question-item .q-content {
+      display: inline;
+    }
+
+    /* Print button styling */
+    #printButton {
+      background: #4CAF50;
+      color: #fff;
+      border: 1px solid #388E3C;
+      padding: 0.3em 1em;
+      cursor: pointer;
+      font-size: inherit;
+    }
+
+    #printButton:hover {
+      background: #388E3C;
+    }
+
+    /* Print media query: hide everything except questions */
+    @media print {
+      @page {
+        margin: 0;
+      }
+      body {
+        padding: 1cm;
+      }
+
+      .controls,
+      .iconMenu,
+      #footer,
+      #menuButton,
+      #answerButton,
+      #printButton {
+        display: none !important;
+      }
+
+      #questionsIWB {
+        display: block !important;
+      }
+
+    }
+  </style>
+  <style type="text/css">
+    .CtxtMenu_InfoClose {
+      top: .2em;
+      right: .2em;
+    }
+
+    .CtxtMenu_InfoContent {
+      overflow: auto;
+      text-align: left;
+      font-size: 80%;
+      padding: .4em .6em;
+      border: 1px inset;
+      margin: 1em 0px;
+      max-height: 20em;
+      max-width: 30em;
+      background-color: #EEEEEE;
+      white-space: normal;
+    }
+
+    .CtxtMenu_Info.CtxtMenu_MousePost {
+      outline: none;
+    }
+
+    .CtxtMenu_Info {
+      position: fixed;
+      left: 50%;
+      width: auto;
+      text-align: center;
+      border: 3px outset;
+      padding: 1em 2em;
+      background-color: #DDDDDD;
+      color: black;
+      cursor: default;
+      font-family: message-box;
+      font-size: 120%;
+      font-style: normal;
+      text-indent: 0;
+      text-transform: none;
+      line-height: normal;
+      letter-spacing: normal;
+      word-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      float: none;
+      z-index: 201;
+      border-radius: 15px;
+      /* Opera 10.5 and IE9 */
+      -webkit-border-radius: 15px;
+      /* Safari and Chrome */
+      -moz-border-radius: 15px;
+      /* Firefox */
+      -khtml-border-radius: 15px;
+      /* Konqueror */
+      box-shadow: 0px 10px 20px #808080;
+      /* Opera 10.5 and IE9 */
+      -webkit-box-shadow: 0px 10px 20px #808080;
+      /* Safari 3 & Chrome */
+      -moz-box-shadow: 0px 10px 20px #808080;
+      /* Forefox 3.5 */
+      -khtml-box-shadow: 0px 10px 20px #808080;
+      /* Konqueror */
+      filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true");
+      /* IE */
+    }
+  </style>
+  <style type="text/css">
+    .CtxtMenu_MenuClose {
+      position: absolute;
+      cursor: pointer;
+      display: inline-block;
+      border: 2px solid #AAA;
+      border-radius: 18px;
+      -webkit-border-radius: 18px;
+      /* Safari and Chrome */
+      -moz-border-radius: 18px;
+      /* Firefox */
+      -khtml-border-radius: 18px;
+      /* Konqueror */
+      font-family: "Courier New", Courier;
+      font-size: 24px;
+      color: #F0F0F0
+    }
+
+    .CtxtMenu_MenuClose span {
+      display: block;
+      background-color: #AAA;
+      border: 1.5px solid;
+      border-radius: 18px;
+      -webkit-border-radius: 18px;
+      /* Safari and Chrome */
+      -moz-border-radius: 18px;
+      /* Firefox */
+      -khtml-border-radius: 18px;
+      /* Konqueror */
+      line-height: 0;
+      padding: 8px 0 6px
+        /* may need to be browser-specific */
+    }
+
+    .CtxtMenu_MenuClose:hover {
+      color: white !important;
+      border: 2px solid #CCC !important
+    }
+
+    .CtxtMenu_MenuClose:hover span {
+      background-color: #CCC !important
+    }
+
+    .CtxtMenu_MenuClose:hover:focus {
+      outline: none
+    }
+  </style>
+  <style type="text/css">
+    .CtxtMenu_Menu {
+      position: absolute;
+      background-color: white;
+      color: black;
+      width: auto;
+      padding: 5px 0px;
+      border: 1px solid #CCCCCC;
+      margin: 0;
+      cursor: default;
+      font: menu;
+      text-align: left;
+      text-indent: 0;
+      text-transform: none;
+      line-height: normal;
+      letter-spacing: normal;
+      word-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      float: none;
+      z-index: 201;
+      border-radius: 5px;
+      /* Opera 10.5 and IE9 */
+      -webkit-border-radius: 5px;
+      /* Safari and Chrome */
+      -moz-border-radius: 5px;
+      /* Firefox */
+      -khtml-border-radius: 5px;
+      /* Konqueror */
+      box-shadow: 0px 10px 20px #808080;
+      /* Opera 10.5 and IE9 */
+      -webkit-box-shadow: 0px 10px 20px #808080;
+      /* Safari 3 & Chrome */
+      -moz-box-shadow: 0px 10px 20px #808080;
+      /* Forefox 3.5 */
+      -khtml-box-shadow: 0px 10px 20px #808080;
+      /* Konqueror */
+    }
+
+    .CtxtMenu_MenuItem {
+      padding: 1px 2em;
+      background: transparent;
+    }
+
+    .CtxtMenu_MenuArrow {
+      position: absolute;
+      right: .5em;
+      padding-top: .25em;
+      color: #666666;
+      font-family: null;
+      font-size: .75em
+    }
+
+    .CtxtMenu_MenuActive .CtxtMenu_MenuArrow {
+      color: white
+    }
+
+    .CtxtMenu_MenuArrow.CtxtMenu_RTL {
+      left: .5em;
+      right: auto
+    }
+
+    .CtxtMenu_MenuCheck {
+      position: absolute;
+      left: .7em;
+      font-family: null
+    }
+
+    .CtxtMenu_MenuCheck.CtxtMenu_RTL {
+      right: .7em;
+      left: auto
+    }
+
+    .CtxtMenu_MenuRadioCheck {
+      position: absolute;
+      left: .7em;
+    }
+
+    .CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {
+      right: .7em;
+      left: auto
+    }
+
+    .CtxtMenu_MenuInputBox {
+      padding-left: 1em;
+      right: .5em;
+      color: #666666;
+      font-family: null;
+    }
+
+    .CtxtMenu_MenuInputBox.CtxtMenu_RTL {
+      left: .1em;
+    }
+
+    .CtxtMenu_MenuComboBox {
+      left: .1em;
+      padding-bottom: .5em;
+    }
+
+    .CtxtMenu_MenuSlider {
+      left: .1em;
+    }
+
+    .CtxtMenu_SliderValue {
+      position: absolute;
+      right: .1em;
+      padding-top: .25em;
+      color: #333333;
+      font-size: .75em
+    }
+
+    .CtxtMenu_SliderBar {
+      outline: none;
+      background: #d3d3d3
+    }
+
+    .CtxtMenu_MenuLabel {
+      padding: 1px 2em 3px 1.33em;
+      font-style: italic
+    }
+
+    .CtxtMenu_MenuRule {
+      border-top: 1px solid #DDDDDD;
+      margin: 4px 3px;
+    }
+
+    .CtxtMenu_MenuDisabled {
+      color: GrayText
+    }
+
+    .CtxtMenu_MenuActive {
+      background-color: #606872;
+      color: white;
+    }
+
+    .CtxtMenu_MenuDisabled:focus {
+      background-color: #E8E8E8
+    }
+
+    .CtxtMenu_MenuLabel:focus {
+      background-color: #E8E8E8
+    }
+
+    .CtxtMenu_ContextMenu:focus {
+      outline: none
+    }
+
+    .CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {
+      outline: none
+    }
+
+    .CtxtMenu_SelectionMenu {
+      position: relative;
+      float: left;
+      border-bottom: none;
+      -webkit-box-shadow: none;
+      -webkit-border-radius: 0px;
+    }
+
+    .CtxtMenu_SelectionItem {
+      padding-right: 1em;
+    }
+
+    .CtxtMenu_Selection {
+      right: 40%;
+      width: 50%;
+    }
+
+    .CtxtMenu_SelectionBox {
+      padding: 0em;
+      max-height: 20em;
+      max-width: none;
+      background-color: #FFFFFF;
+    }
+
+    .CtxtMenu_SelectionDivider {
+      clear: both;
+      border-top: 2px solid #000000;
+    }
+
+    .CtxtMenu_Menu .CtxtMenu_MenuClose {
+      top: -10px;
+      left: -10px
+    }
+  </style>
+  <style id="MJX-CHTML-styles">
+    mjx-container[jax="CHTML"] {
+      line-height: 0;
+    }
+
+    mjx-container [space="1"] {
+      margin-left: .111em;
+    }
+
+    mjx-container [space="2"] {
+      margin-left: .167em;
+    }
+
+    mjx-container [space="3"] {
+      margin-left: .222em;
+    }
+
+    mjx-container [space="4"] {
+      margin-left: .278em;
+    }
+
+    mjx-container [space="5"] {
+      margin-left: .333em;
+    }
+
+    mjx-container [rspace="1"] {
+      margin-right: .111em;
+    }
+
+    mjx-container [rspace="2"] {
+      margin-right: .167em;
+    }
+
+    mjx-container [rspace="3"] {
+      margin-right: .222em;
+    }
+
+    mjx-container [rspace="4"] {
+      margin-right: .278em;
+    }
+
+    mjx-container [rspace="5"] {
+      margin-right: .333em;
+    }
+
+    mjx-container [size="s"] {
+      font-size: 70.7%;
+    }
+
+    mjx-container [size="ss"] {
+      font-size: 50%;
+    }
+
+    mjx-container [size="Tn"] {
+      font-size: 60%;
+    }
+
+    mjx-container [size="sm"] {
+      font-size: 85%;
+    }
+
+    mjx-container [size="lg"] {
+      font-size: 120%;
+    }
+
+    mjx-container [size="Lg"] {
+      font-size: 144%;
+    }
+
+    mjx-container [size="LG"] {
+      font-size: 173%;
+    }
+
+    mjx-container [size="hg"] {
+      font-size: 207%;
+    }
+
+    mjx-container [size="HG"] {
+      font-size: 249%;
+    }
+
+    mjx-container [width="full"] {
+      width: 100%;
+    }
+
+    mjx-box {
+      display: inline-block;
+    }
+
+    mjx-block {
+      display: block;
+    }
+
+    mjx-itable {
+      display: inline-table;
+    }
+
+    mjx-row {
+      display: table-row;
+    }
+
+    mjx-row>* {
+      display: table-cell;
+    }
+
+    mjx-mtext {
+      display: inline-block;
+    }
+
+    mjx-mstyle {
+      display: inline-block;
+    }
+
+    mjx-merror {
+      display: inline-block;
+      color: red;
+      background-color: yellow;
+    }
+
+    mjx-mphantom {
+      visibility: hidden;
+    }
+
+    _::-webkit-full-page-media,
+    _:future,
+    :root mjx-container {
+      will-change: opacity;
+    }
+
+    mjx-assistive-mml {
+      position: absolute !important;
+      top: 0px;
+      left: 0px;
+      clip: rect(1px, 1px, 1px, 1px);
+      padding: 1px 0px 0px 0px !important;
+      border: 0px !important;
+      display: block !important;
+      width: auto !important;
+      overflow: hidden !important;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    mjx-assistive-mml[display="block"] {
+      width: 100% !important;
+    }
+
+    mjx-c::before {
+      display: block;
+      width: 0;
+    }
+
+    .MJX-TEX {
+      font-family: MJXZERO, MJXTEX;
+    }
+
+    .TEX-B {
+      font-family: MJXZERO, MJXTEX-B;
+    }
+
+    .TEX-I {
+      font-family: MJXZERO, MJXTEX-I;
+    }
+
+    .TEX-MI {
+      font-family: MJXZERO, MJXTEX-MI;
+    }
+
+    .TEX-BI {
+      font-family: MJXZERO, MJXTEX-BI;
+    }
+
+    .TEX-S1 {
+      font-family: MJXZERO, MJXTEX-S1;
+    }
+
+    .TEX-S2 {
+      font-family: MJXZERO, MJXTEX-S2;
+    }
+
+    .TEX-S3 {
+      font-family: MJXZERO, MJXTEX-S3;
+    }
+
+    .TEX-S4 {
+      font-family: MJXZERO, MJXTEX-S4;
+    }
+
+    .TEX-A {
+      font-family: MJXZERO, MJXTEX-A;
+    }
+
+    .TEX-C {
+      font-family: MJXZERO, MJXTEX-C;
+    }
+
+    .TEX-CB {
+      font-family: MJXZERO, MJXTEX-CB;
+    }
+
+    .TEX-FR {
+      font-family: MJXZERO, MJXTEX-FR;
+    }
+
+    .TEX-FRB {
+      font-family: MJXZERO, MJXTEX-FRB;
+    }
+
+    .TEX-SS {
+      font-family: MJXZERO, MJXTEX-SS;
+    }
+
+    .TEX-SSB {
+      font-family: MJXZERO, MJXTEX-SSB;
+    }
+
+    .TEX-SSI {
+      font-family: MJXZERO, MJXTEX-SSI;
+    }
+
+    .TEX-SC {
+      font-family: MJXZERO, MJXTEX-SC;
+    }
+
+    .TEX-T {
+      font-family: MJXZERO, MJXTEX-T;
+    }
+
+    .TEX-V {
+      font-family: MJXZERO, MJXTEX-V;
+    }
+
+    .TEX-VB {
+      font-family: MJXZERO, MJXTEX-VB;
+    }
+
+    mjx-stretchy-v mjx-c,
+    mjx-stretchy-h mjx-c {
+      font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A ! important;
+    }
+
+    @font-face
+
+    /* 0 */
+      {
+      font-family: MJXZERO;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 1 */
+      {
+      font-family: MJXTEX;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 2 */
+      {
+      font-family: MJXTEX-B;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 3 */
+      {
+      font-family: MJXTEX-I;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 4 */
+      {
+      font-family: MJXTEX-MI;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 5 */
+      {
+      font-family: MJXTEX-BI;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 6 */
+      {
+      font-family: MJXTEX-S1;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 7 */
+      {
+      font-family: MJXTEX-S2;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 8 */
+      {
+      font-family: MJXTEX-S3;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 9 */
+      {
+      font-family: MJXTEX-S4;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 10 */
+      {
+      font-family: MJXTEX-A;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 11 */
+      {
+      font-family: MJXTEX-C;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 12 */
+      {
+      font-family: MJXTEX-CB;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 13 */
+      {
+      font-family: MJXTEX-FR;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 14 */
+      {
+      font-family: MJXTEX-FRB;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 15 */
+      {
+      font-family: MJXTEX-SS;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 16 */
+      {
+      font-family: MJXTEX-SSB;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 17 */
+      {
+      font-family: MJXTEX-SSI;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 18 */
+      {
+      font-family: MJXTEX-SC;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 19 */
+      {
+      font-family: MJXTEX-T;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 20 */
+      {
+      font-family: MJXTEX-V;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff") format("woff");
+    }
+
+    @font-face
+
+    /* 21 */
+      {
+      font-family: MJXTEX-VB;
+      src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
+    }
+  </style>
+</head>
+
+<body __processed_736933c3-3e2b-4541-bb0f-a2b073ae1522__="true">
+  <!-- Google tag (gtag.js) -->
+  <script async="" src="./Maths Question Generator_files/js"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-JYHV7BKFZS');
+  </script>
+  <div class="iconMenu">
+    <img title="Toggle Fullscreen" class="icon" onclick="toggleFS()"
+      src="./Maths Question Generator_files/fullscreen.svg">
+  </div>
+  <section id="controls" class="controls border">
+    <div>
+      <label for="totalQuestionsSelect">Questions:</label>
+      <input type="number" id="totalQuestionsSelect" value="5" min="1" max="50">
+      <label for="columnSelect">Columns:</label>
+      <label for="fontSize">Font Size:</label>
+      <input id="fontSize" oninput="displayQuestions()" value="20" min="8" max="48" type="number">
+    </div>
+    <div>
+      <button onclick="createSheet()">Create Questions</button>
+      <button onclick="showMenu()" id="menuButton">Topic Menu</button>
+      <button onclick="toggleAnswers()" id="answerButton">Show Answers</button>
+      <button onclick="printQuestions()" id="printButton">🖨️ Print</button>
+    </div>
+    <div>
+
+      <div id="topicMenu">
+
+        <div class="questionBox border">
+          <h2>Topic 1</h2>
+          <div class="keyWordsearch"><input type="search" placeholder="Search Keyword" id="search"
+              onclick="filter(this.value, 0)" onkeyup="filter(this.value, 0)"></div>
+          <div class="topicBox"><select onchange="topicToUrl()" id="topic0">
+              <option selected="" value="0">Random</option>
+              <option value="161">1. Arithmetic: Adding decimals</option>
+              <option value="1">2. Arithmetic: Adding whole numbers</option>
+              <option value="164">3. Arithmetic: Dividing decimals</option>
+              <option value="4">4. Arithmetic: Dividing whole numbers</option>
+              <option value="163">5. Arithmetic: Multiplying decimals</option>
+              <option value="3">6. Arithmetic: Multiplying whole numbers</option>
+              <option value="162">7. Arithmetic: Subtracting decimals</option>
+              <option value="2">8. Arithmetic: Subtracting whole numbers</option>
+              <option value="165">9. Arithmetic: The four operations with decimals</option>
+              <option value="23">10. Arithmetic: The four operations with whole numbers</option>
+              <option value="122">11. Bounds: Error Intervals</option>
+              <option value="142">12. Circles: Area</option>
+              <option value="145">13. Circles: Circumference</option>
+              <option value="103">14. Circles: Stating the equation</option>
+              <option value="74">15. Converting units: Time</option>
+              <option value="141">16. Cubic Graphs: Completing a table of values</option>
+              <option value="60">17. Differences</option>
+              <option value="166">18. Directed number: Addition and subtraction with negatives</option>
+              <option value="98">19. Directed number: Addition with negatives</option>
+              <option value="146">20. Directed number: Calculating across zero</option>
+              <option value="101">21. Directed number: Division with negatives</option>
+              <option value="10">22. Directed number: Mixed operations with negatives</option>
+              <option value="100">23. Directed number: Multiplication with negatives</option>
+              <option value="61">24. Directed number: Negative temperatures</option>
+              <option value="138">25. Directed number: Rewriting as a sum</option>
+              <option value="99">26. Directed number: Subtraction with negatives</option>
+              <option value="6">27. Doubling</option>
+              <option value="107">28. Equations: If ... then ...</option>
+              <option value="44">29. Equations: Mixed</option>
+              <option value="115">30. Equations: Solving equations involving ratio</option>
+              <option value="121">31. Equations: Solving linear simultaneous</option>
+              <option value="143">32. Equations: Solving monic quadratics by factorising</option>
+              <option value="144">33. Equations: Solving non-monic quadratics by factorising</option>
+              <option value="29">34. Equations: Solving one-step equations</option>
+              <option value="38">35. Equations: Solving two-step equations</option>
+              <option value="48">36. Equations: Solving with brackets both sides</option>
+              <option value="46">37. Equations: Solving with brackets one side</option>
+              <option value="43">38. Equations: Solving with unknowns on both sides</option>
+              <option value="135">39. Expressions: Algebraic division in one variable</option>
+              <option value="136">40. Expressions: Algebraic division in two variables</option>
+              <option value="14">41. Expressions: Collecting like terms</option>
+              <option value="84">42. Expressions: Completing the square</option>
+              <option value="87">43. Expressions: Expanding binomials to monic quadratics</option>
+              <option value="134">44. Expressions: Expanding binomials to non-monic quadratics</option>
+              <option value="66">45. Expressions: Expanding brackets and simplifying </option>
+              <option value="65">46. Expressions: Expanding single brackets</option>
+              <option value="113">47. Expressions: Factorising into single brackets</option>
+              <option value="86">48. Expressions: Factorising monic quadratics</option>
+              <option value="133">49. Expressions: Factorising non-monic quadratics</option>
+              <option value="64">50. Expressions: Multiplying terms</option>
+              <option value="51">51. Expressions: Substitution</option>
+              <option value="15">52. Factors</option>
+              <option value="79">53. FDP: Converting from decimals</option>
+              <option value="80">54. FDP: Converting from fractions</option>
+              <option value="81">55. FDP: Converting from percentages</option>
+              <option value="13">56. FDP: Converting mixed</option>
+              <option value="127">57. FDP: Converting recurring decimals to fractions</option>
+              <option value="67">58. FDP: Of one amount to another</option>
+              <option value="106">59. FDP: Using decimals to find fractions</option>
+              <option value="155">60. Fractions: Adding mixed numbers</option>
+              <option value="31">61. Fractions: Addition</option>
+              <option value="42">62. Fractions: Converting improper to mixed</option>
+              <option value="111">63. Fractions: Converting mixed to improper </option>
+              <option value="157">64. Fractions: Dividing mixed numbers</option>
+              <option value="114">65. Fractions: Division</option>
+              <option value="54">66. Fractions: Four operations</option>
+              <option value="59">67. Fractions: Increase and decrease</option>
+              <option value="116">68. Fractions: Integers between improper fractions</option>
+              <option value="32">69. Fractions: Multiplication</option>
+              <option value="156">70. Fractions: Multiplying mixed numbers</option>
+              <option value="7">71. Fractions: Of amounts</option>
+              <option value="77">72. Fractions: Of one amount to another</option>
+              <option value="20">73. Fractions: Simplifying</option>
+              <option value="159">74. Fractions: Subtracting mixed numbers</option>
+              <option value="158">75. Fractions: Subtraction</option>
+              <option value="132">76. Functions: Find an input given an output</option>
+              <option value="131">77. Functions: Find an output given an input</option>
+              <option value="82">78. Graphs: Gradient between two points on a line</option>
+              <option value="83">79. Graphs: Midpoint between two points on a line</option>
+              <option value="5">80. Halving</option>
+              <option value="89">81. Indices: Division law</option>
+              <option value="91">82. Indices: Mixed Laws</option>
+              <option value="88">83. Indices: Multiplication law</option>
+              <option value="90">84. Indices: Power law</option>
+              <option value="68">85. Inequalities: Solving 1 step</option>
+              <option value="69">86. Inequalities: Solving 2 step</option>
+              <option value="70">87. Inequalities: Solving unknowns on both sides</option>
+              <option value="126">88. Linear Graphs: Completing a table of values</option>
+              <option value="45">89. Metric units: Converting lengths</option>
+              <option value="57">90. Metric units: Converting mixed units</option>
+              <option value="56">91. Metric units: Converting volume</option>
+              <option value="55">92. Metric units: Converting weights</option>
+              <option value="24">93. Money: Adding coins</option>
+              <option value="25">94. Money: Counting coins</option>
+              <option value="16">95. Multiples</option>
+              <option value="119">96. Number bonds: Adding close powers of ten</option>
+              <option value="30">97. Number bonds: Addition and Subtraction</option>
+              <option value="105">98. Order of Operations: Addition and Subtraction</option>
+              <option value="104">99. Order of Operations: Multiplication and Division</option>
+              <option value="96">100. Percentages: Change</option>
+              <option value="49">101. Percentages: Increase and decrease</option>
+              <option value="95">102. Percentages: Multipliers</option>
+              <option value="8">103. Percentages: Of amounts</option>
+              <option value="78">104. Percentages: Of one amount to another</option>
+              <option value="97">105. Percentages: Repeated change</option>
+              <option value="50">106. Percentages: Reverse</option>
+              <option value="11">107. Place Value: Multiplying and dividing by powers of ten</option>
+              <option value="28">108. Place Value: Ordering numbers</option>
+              <option value="112">109. Place Value: Powers</option>
+              <option value="62">110. Polygons: Sides</option>
+              <option value="27">111. Powers and roots</option>
+              <option value="130">112. Prime Factors: Adding and subtracting surds</option>
+              <option value="160">113. Prime Factors: Calculating the product of primes</option>
+              <option value="109">114. Prime Factors: Consecutive integer product</option>
+              <option value="108">115. Prime Factors: Expressing as a product</option>
+              <option value="169">116. Prime Factors: Highest common factor (HCF) given decomposition</option>
+              <option value="17">117. Prime Factors: Highest common factors (HCF)</option>
+              <option value="118">118. Prime Factors: How many factors</option>
+              <option value="170">119. Prime Factors: Lowest common multiple (LCM) given decomposition</option>
+              <option value="18">120. Prime Factors: Lowest common multiples (LCM)</option>
+              <option value="110">121. Prime Factors: Missing products</option>
+              <option value="128">122. Prime Factors: Multiplying surds</option>
+              <option value="137">123. Prime Factors: Rationalising the denominator of a fraction with a surd</option>
+              <option value="125">124. Prime Factors: Recurring or terminating decimals</option>
+              <option value="129">125. Prime Factors: Simplifying surds</option>
+              <option value="63">126. Probability: Expected frequency</option>
+              <option value="58">127. Probability: Simple events</option>
+              <option value="53">128. Proportion: Unitary method</option>
+              <option value="139">129. Pythagoras: Distance between two points on a line</option>
+              <option value="148">130. Pythagoras: Finding a short side in a right-angled triangle</option>
+              <option value="150">131. Pythagoras: Finding the area of a right-angled triangle</option>
+              <option value="147">132. Pythagoras: Finding the hypotenuse in a right-angled triangle</option>
+              <option value="149">133. Pythagoras: Finding the perimeter of a right-angled triangle</option>
+              <option value="140">134. Quadratic Graphs: Completing a table of values</option>
+              <option value="85">135. Quadratics: Find equation given turning point</option>
+              <option value="117">136. Ratio: Changing</option>
+              <option value="93">137. Ratio: Combining two ratios into one</option>
+              <option value="52">138. Ratio: Find a share given another</option>
+              <option value="94">139. Ratio: Find a share given the difference</option>
+              <option value="92">140. Ratio: Mixed</option>
+              <option value="12">141. Ratio: Sharing a given total</option>
+              <option value="19">142. Ratio: Simplifying</option>
+              <option value="124">143. Ratio: Writing as a fraction</option>
+              <option value="123">144. Ratio: Writing in the form 1:n or n:1</option>
+              <option value="167">145. Rounding to positive powers of ten</option>
+              <option value="9">146. Rounding to significant figures</option>
+              <option value="168">147. Rounding to whole numbers and decimal places</option>
+              <option value="71">148. Sequences: Fibonacci</option>
+              <option value="21">149. Sequences: Finding a linear nth term rule</option>
+              <option value="73">150. Sequences: Finding a quadratic nth term rule</option>
+              <option value="120">151. Sequences: Finding a specific term</option>
+              <option value="47">152. Sequences: Finding the next term</option>
+              <option value="22">153. Sequences: Generating terms</option>
+              <option value="72">154. Sequences: Geometric</option>
+              <option value="26">155. Speed, distance, time</option>
+              <option value="40">156. Standard Form: Addition</option>
+              <option value="102">157. Standard Form: Converting from</option>
+              <option value="41">158. Standard Form: Converting to</option>
+              <option value="76">159. Standard Form: Division</option>
+              <option value="39">160. Standard Form: Multiplication</option>
+              <option value="75">161. Standard Form: Subtraction</option>
+              <option value="37">162. Statistics: Averages and range</option>
+              <option value="33">163. Statistics: Mean</option>
+              <option value="34">164. Statistics: Median</option>
+              <option value="36">165. Statistics: Mode</option>
+              <option value="35">166. Statistics: Range</option>
+              <option value="151">167. Trigonometry: Finding a missing angle in a right-angled triangle</option>
+              <option value="152">168. Trigonometry: Finding a missing length in a right-angled triangle</option>
+              <option value="153">169. Trigonometry: Finding the area of a right-angled triangle</option>
+              <option value="154">170. Trigonometry: Finding the perimeter of a right-angled triangle</option>
+            </select></div>
+          <h3>Difficulty</h3><label for="level0Min">Min:</label><input oninput="topicToUrl()" class="level"
+            type="number" id="level0Min" value="0" min="0" max="10"><label for="level0Max">Max:</label><input
+            oninput="topicToUrl()" class="level" type="number" id="level0Max" value="10" min="0" max="10">
+        </div>
+        <div class="questionBox border">
+          <h2>Topic 2</h2>
+          <div class="keyWordsearch"><input type="search" placeholder="Search Keyword" id="search"
+              onclick="filter(this.value, 1)" onkeyup="filter(this.value, 1)"></div>
+          <div class="topicBox"><select onchange="topicToUrl()" id="topic1">
+              <option selected="" value="0">Random</option>
+              <option value="161">1. Arithmetic: Adding decimals</option>
+              <option value="1">2. Arithmetic: Adding whole numbers</option>
+              <option value="164">3. Arithmetic: Dividing decimals</option>
+              <option value="4">4. Arithmetic: Dividing whole numbers</option>
+              <option value="163">5. Arithmetic: Multiplying decimals</option>
+              <option value="3">6. Arithmetic: Multiplying whole numbers</option>
+              <option value="162">7. Arithmetic: Subtracting decimals</option>
+              <option value="2">8. Arithmetic: Subtracting whole numbers</option>
+              <option value="165">9. Arithmetic: The four operations with decimals</option>
+              <option value="23">10. Arithmetic: The four operations with whole numbers</option>
+              <option value="122">11. Bounds: Error Intervals</option>
+              <option value="142">12. Circles: Area</option>
+              <option value="145">13. Circles: Circumference</option>
+              <option value="103">14. Circles: Stating the equation</option>
+              <option value="74">15. Converting units: Time</option>
+              <option value="141">16. Cubic Graphs: Completing a table of values</option>
+              <option value="60">17. Differences</option>
+              <option value="166">18. Directed number: Addition and subtraction with negatives</option>
+              <option value="98">19. Directed number: Addition with negatives</option>
+              <option value="146">20. Directed number: Calculating across zero</option>
+              <option value="101">21. Directed number: Division with negatives</option>
+              <option value="10">22. Directed number: Mixed operations with negatives</option>
+              <option value="100">23. Directed number: Multiplication with negatives</option>
+              <option value="61">24. Directed number: Negative temperatures</option>
+              <option value="138">25. Directed number: Rewriting as a sum</option>
+              <option value="99">26. Directed number: Subtraction with negatives</option>
+              <option value="6">27. Doubling</option>
+              <option value="107">28. Equations: If ... then ...</option>
+              <option value="44">29. Equations: Mixed</option>
+              <option value="115">30. Equations: Solving equations involving ratio</option>
+              <option value="121">31. Equations: Solving linear simultaneous</option>
+              <option value="143">32. Equations: Solving monic quadratics by factorising</option>
+              <option value="144">33. Equations: Solving non-monic quadratics by factorising</option>
+              <option value="29">34. Equations: Solving one-step equations</option>
+              <option value="38">35. Equations: Solving two-step equations</option>
+              <option value="48">36. Equations: Solving with brackets both sides</option>
+              <option value="46">37. Equations: Solving with brackets one side</option>
+              <option value="43">38. Equations: Solving with unknowns on both sides</option>
+              <option value="135">39. Expressions: Algebraic division in one variable</option>
+              <option value="136">40. Expressions: Algebraic division in two variables</option>
+              <option value="14">41. Expressions: Collecting like terms</option>
+              <option value="84">42. Expressions: Completing the square</option>
+              <option value="87">43. Expressions: Expanding binomials to monic quadratics</option>
+              <option value="134">44. Expressions: Expanding binomials to non-monic quadratics</option>
+              <option value="66">45. Expressions: Expanding brackets and simplifying </option>
+              <option value="65">46. Expressions: Expanding single brackets</option>
+              <option value="113">47. Expressions: Factorising into single brackets</option>
+              <option value="86">48. Expressions: Factorising monic quadratics</option>
+              <option value="133">49. Expressions: Factorising non-monic quadratics</option>
+              <option value="64">50. Expressions: Multiplying terms</option>
+              <option value="51">51. Expressions: Substitution</option>
+              <option value="15">52. Factors</option>
+              <option value="79">53. FDP: Converting from decimals</option>
+              <option value="80">54. FDP: Converting from fractions</option>
+              <option value="81">55. FDP: Converting from percentages</option>
+              <option value="13">56. FDP: Converting mixed</option>
+              <option value="127">57. FDP: Converting recurring decimals to fractions</option>
+              <option value="67">58. FDP: Of one amount to another</option>
+              <option value="106">59. FDP: Using decimals to find fractions</option>
+              <option value="155">60. Fractions: Adding mixed numbers</option>
+              <option value="31">61. Fractions: Addition</option>
+              <option value="42">62. Fractions: Converting improper to mixed</option>
+              <option value="111">63. Fractions: Converting mixed to improper </option>
+              <option value="157">64. Fractions: Dividing mixed numbers</option>
+              <option value="114">65. Fractions: Division</option>
+              <option value="54">66. Fractions: Four operations</option>
+              <option value="59">67. Fractions: Increase and decrease</option>
+              <option value="116">68. Fractions: Integers between improper fractions</option>
+              <option value="32">69. Fractions: Multiplication</option>
+              <option value="156">70. Fractions: Multiplying mixed numbers</option>
+              <option value="7">71. Fractions: Of amounts</option>
+              <option value="77">72. Fractions: Of one amount to another</option>
+              <option value="20">73. Fractions: Simplifying</option>
+              <option value="159">74. Fractions: Subtracting mixed numbers</option>
+              <option value="158">75. Fractions: Subtraction</option>
+              <option value="132">76. Functions: Find an input given an output</option>
+              <option value="131">77. Functions: Find an output given an input</option>
+              <option value="82">78. Graphs: Gradient between two points on a line</option>
+              <option value="83">79. Graphs: Midpoint between two points on a line</option>
+              <option value="5">80. Halving</option>
+              <option value="89">81. Indices: Division law</option>
+              <option value="91">82. Indices: Mixed Laws</option>
+              <option value="88">83. Indices: Multiplication law</option>
+              <option value="90">84. Indices: Power law</option>
+              <option value="68">85. Inequalities: Solving 1 step</option>
+              <option value="69">86. Inequalities: Solving 2 step</option>
+              <option value="70">87. Inequalities: Solving unknowns on both sides</option>
+              <option value="126">88. Linear Graphs: Completing a table of values</option>
+              <option value="45">89. Metric units: Converting lengths</option>
+              <option value="57">90. Metric units: Converting mixed units</option>
+              <option value="56">91. Metric units: Converting volume</option>
+              <option value="55">92. Metric units: Converting weights</option>
+              <option value="24">93. Money: Adding coins</option>
+              <option value="25">94. Money: Counting coins</option>
+              <option value="16">95. Multiples</option>
+              <option value="119">96. Number bonds: Adding close powers of ten</option>
+              <option value="30">97. Number bonds: Addition and Subtraction</option>
+              <option value="105">98. Order of Operations: Addition and Subtraction</option>
+              <option value="104">99. Order of Operations: Multiplication and Division</option>
+              <option value="96">100. Percentages: Change</option>
+              <option value="49">101. Percentages: Increase and decrease</option>
+              <option value="95">102. Percentages: Multipliers</option>
+              <option value="8">103. Percentages: Of amounts</option>
+              <option value="78">104. Percentages: Of one amount to another</option>
+              <option value="97">105. Percentages: Repeated change</option>
+              <option value="50">106. Percentages: Reverse</option>
+              <option value="11">107. Place Value: Multiplying and dividing by powers of ten</option>
+              <option value="28">108. Place Value: Ordering numbers</option>
+              <option value="112">109. Place Value: Powers</option>
+              <option value="62">110. Polygons: Sides</option>
+              <option value="27">111. Powers and roots</option>
+              <option value="130">112. Prime Factors: Adding and subtracting surds</option>
+              <option value="160">113. Prime Factors: Calculating the product of primes</option>
+              <option value="109">114. Prime Factors: Consecutive integer product</option>
+              <option value="108">115. Prime Factors: Expressing as a product</option>
+              <option value="169">116. Prime Factors: Highest common factor (HCF) given decomposition</option>
+              <option value="17">117. Prime Factors: Highest common factors (HCF)</option>
+              <option value="118">118. Prime Factors: How many factors</option>
+              <option value="170">119. Prime Factors: Lowest common multiple (LCM) given decomposition</option>
+              <option value="18">120. Prime Factors: Lowest common multiples (LCM)</option>
+              <option value="110">121. Prime Factors: Missing products</option>
+              <option value="128">122. Prime Factors: Multiplying surds</option>
+              <option value="137">123. Prime Factors: Rationalising the denominator of a fraction with a surd</option>
+              <option value="125">124. Prime Factors: Recurring or terminating decimals</option>
+              <option value="129">125. Prime Factors: Simplifying surds</option>
+              <option value="63">126. Probability: Expected frequency</option>
+              <option value="58">127. Probability: Simple events</option>
+              <option value="53">128. Proportion: Unitary method</option>
+              <option value="139">129. Pythagoras: Distance between two points on a line</option>
+              <option value="148">130. Pythagoras: Finding a short side in a right-angled triangle</option>
+              <option value="150">131. Pythagoras: Finding the area of a right-angled triangle</option>
+              <option value="147">132. Pythagoras: Finding the hypotenuse in a right-angled triangle</option>
+              <option value="149">133. Pythagoras: Finding the perimeter of a right-angled triangle</option>
+              <option value="140">134. Quadratic Graphs: Completing a table of values</option>
+              <option value="85">135. Quadratics: Find equation given turning point</option>
+              <option value="117">136. Ratio: Changing</option>
+              <option value="93">137. Ratio: Combining two ratios into one</option>
+              <option value="52">138. Ratio: Find a share given another</option>
+              <option value="94">139. Ratio: Find a share given the difference</option>
+              <option value="92">140. Ratio: Mixed</option>
+              <option value="12">141. Ratio: Sharing a given total</option>
+              <option value="19">142. Ratio: Simplifying</option>
+              <option value="124">143. Ratio: Writing as a fraction</option>
+              <option value="123">144. Ratio: Writing in the form 1:n or n:1</option>
+              <option value="167">145. Rounding to positive powers of ten</option>
+              <option value="9">146. Rounding to significant figures</option>
+              <option value="168">147. Rounding to whole numbers and decimal places</option>
+              <option value="71">148. Sequences: Fibonacci</option>
+              <option value="21">149. Sequences: Finding a linear nth term rule</option>
+              <option value="73">150. Sequences: Finding a quadratic nth term rule</option>
+              <option value="120">151. Sequences: Finding a specific term</option>
+              <option value="47">152. Sequences: Finding the next term</option>
+              <option value="22">153. Sequences: Generating terms</option>
+              <option value="72">154. Sequences: Geometric</option>
+              <option value="26">155. Speed, distance, time</option>
+              <option value="40">156. Standard Form: Addition</option>
+              <option value="102">157. Standard Form: Converting from</option>
+              <option value="41">158. Standard Form: Converting to</option>
+              <option value="76">159. Standard Form: Division</option>
+              <option value="39">160. Standard Form: Multiplication</option>
+              <option value="75">161. Standard Form: Subtraction</option>
+              <option value="37">162. Statistics: Averages and range</option>
+              <option value="33">163. Statistics: Mean</option>
+              <option value="34">164. Statistics: Median</option>
+              <option value="36">165. Statistics: Mode</option>
+              <option value="35">166. Statistics: Range</option>
+              <option value="151">167. Trigonometry: Finding a missing angle in a right-angled triangle</option>
+              <option value="152">168. Trigonometry: Finding a missing length in a right-angled triangle</option>
+              <option value="153">169. Trigonometry: Finding the area of a right-angled triangle</option>
+              <option value="154">170. Trigonometry: Finding the perimeter of a right-angled triangle</option>
+            </select></div>
+          <h3>Difficulty</h3><label for="level1Min">Min:</label><input oninput="topicToUrl()" class="level"
+            type="number" id="level1Min" value="0" min="0" max="10"><label for="level1Max">Max:</label><input
+            oninput="topicToUrl()" class="level" type="number" id="level1Max" value="10" min="0" max="10">
+        </div>
+        <div class="questionBox border">
+          <h2>Topic 3</h2>
+          <div class="keyWordsearch"><input type="search" placeholder="Search Keyword" id="search"
+              onclick="filter(this.value, 2)" onkeyup="filter(this.value, 2)"></div>
+          <div class="topicBox"><select onchange="topicToUrl()" id="topic2">
+              <option selected="" value="0">Random</option>
+              <option value="161">1. Arithmetic: Adding decimals</option>
+              <option value="1">2. Arithmetic: Adding whole numbers</option>
+              <option value="164">3. Arithmetic: Dividing decimals</option>
+              <option value="4">4. Arithmetic: Dividing whole numbers</option>
+              <option value="163">5. Arithmetic: Multiplying decimals</option>
+              <option value="3">6. Arithmetic: Multiplying whole numbers</option>
+              <option value="162">7. Arithmetic: Subtracting decimals</option>
+              <option value="2">8. Arithmetic: Subtracting whole numbers</option>
+              <option value="165">9. Arithmetic: The four operations with decimals</option>
+              <option value="23">10. Arithmetic: The four operations with whole numbers</option>
+              <option value="122">11. Bounds: Error Intervals</option>
+              <option value="142">12. Circles: Area</option>
+              <option value="145">13. Circles: Circumference</option>
+              <option value="103">14. Circles: Stating the equation</option>
+              <option value="74">15. Converting units: Time</option>
+              <option value="141">16. Cubic Graphs: Completing a table of values</option>
+              <option value="60">17. Differences</option>
+              <option value="166">18. Directed number: Addition and subtraction with negatives</option>
+              <option value="98">19. Directed number: Addition with negatives</option>
+              <option value="146">20. Directed number: Calculating across zero</option>
+              <option value="101">21. Directed number: Division with negatives</option>
+              <option value="10">22. Directed number: Mixed operations with negatives</option>
+              <option value="100">23. Directed number: Multiplication with negatives</option>
+              <option value="61">24. Directed number: Negative temperatures</option>
+              <option value="138">25. Directed number: Rewriting as a sum</option>
+              <option value="99">26. Directed number: Subtraction with negatives</option>
+              <option value="6">27. Doubling</option>
+              <option value="107">28. Equations: If ... then ...</option>
+              <option value="44">29. Equations: Mixed</option>
+              <option value="115">30. Equations: Solving equations involving ratio</option>
+              <option value="121">31. Equations: Solving linear simultaneous</option>
+              <option value="143">32. Equations: Solving monic quadratics by factorising</option>
+              <option value="144">33. Equations: Solving non-monic quadratics by factorising</option>
+              <option value="29">34. Equations: Solving one-step equations</option>
+              <option value="38">35. Equations: Solving two-step equations</option>
+              <option value="48">36. Equations: Solving with brackets both sides</option>
+              <option value="46">37. Equations: Solving with brackets one side</option>
+              <option value="43">38. Equations: Solving with unknowns on both sides</option>
+              <option value="135">39. Expressions: Algebraic division in one variable</option>
+              <option value="136">40. Expressions: Algebraic division in two variables</option>
+              <option value="14">41. Expressions: Collecting like terms</option>
+              <option value="84">42. Expressions: Completing the square</option>
+              <option value="87">43. Expressions: Expanding binomials to monic quadratics</option>
+              <option value="134">44. Expressions: Expanding binomials to non-monic quadratics</option>
+              <option value="66">45. Expressions: Expanding brackets and simplifying </option>
+              <option value="65">46. Expressions: Expanding single brackets</option>
+              <option value="113">47. Expressions: Factorising into single brackets</option>
+              <option value="86">48. Expressions: Factorising monic quadratics</option>
+              <option value="133">49. Expressions: Factorising non-monic quadratics</option>
+              <option value="64">50. Expressions: Multiplying terms</option>
+              <option value="51">51. Expressions: Substitution</option>
+              <option value="15">52. Factors</option>
+              <option value="79">53. FDP: Converting from decimals</option>
+              <option value="80">54. FDP: Converting from fractions</option>
+              <option value="81">55. FDP: Converting from percentages</option>
+              <option value="13">56. FDP: Converting mixed</option>
+              <option value="127">57. FDP: Converting recurring decimals to fractions</option>
+              <option value="67">58. FDP: Of one amount to another</option>
+              <option value="106">59. FDP: Using decimals to find fractions</option>
+              <option value="155">60. Fractions: Adding mixed numbers</option>
+              <option value="31">61. Fractions: Addition</option>
+              <option value="42">62. Fractions: Converting improper to mixed</option>
+              <option value="111">63. Fractions: Converting mixed to improper </option>
+              <option value="157">64. Fractions: Dividing mixed numbers</option>
+              <option value="114">65. Fractions: Division</option>
+              <option value="54">66. Fractions: Four operations</option>
+              <option value="59">67. Fractions: Increase and decrease</option>
+              <option value="116">68. Fractions: Integers between improper fractions</option>
+              <option value="32">69. Fractions: Multiplication</option>
+              <option value="156">70. Fractions: Multiplying mixed numbers</option>
+              <option value="7">71. Fractions: Of amounts</option>
+              <option value="77">72. Fractions: Of one amount to another</option>
+              <option value="20">73. Fractions: Simplifying</option>
+              <option value="159">74. Fractions: Subtracting mixed numbers</option>
+              <option value="158">75. Fractions: Subtraction</option>
+              <option value="132">76. Functions: Find an input given an output</option>
+              <option value="131">77. Functions: Find an output given an input</option>
+              <option value="82">78. Graphs: Gradient between two points on a line</option>
+              <option value="83">79. Graphs: Midpoint between two points on a line</option>
+              <option value="5">80. Halving</option>
+              <option value="89">81. Indices: Division law</option>
+              <option value="91">82. Indices: Mixed Laws</option>
+              <option value="88">83. Indices: Multiplication law</option>
+              <option value="90">84. Indices: Power law</option>
+              <option value="68">85. Inequalities: Solving 1 step</option>
+              <option value="69">86. Inequalities: Solving 2 step</option>
+              <option value="70">87. Inequalities: Solving unknowns on both sides</option>
+              <option value="126">88. Linear Graphs: Completing a table of values</option>
+              <option value="45">89. Metric units: Converting lengths</option>
+              <option value="57">90. Metric units: Converting mixed units</option>
+              <option value="56">91. Metric units: Converting volume</option>
+              <option value="55">92. Metric units: Converting weights</option>
+              <option value="24">93. Money: Adding coins</option>
+              <option value="25">94. Money: Counting coins</option>
+              <option value="16">95. Multiples</option>
+              <option value="119">96. Number bonds: Adding close powers of ten</option>
+              <option value="30">97. Number bonds: Addition and Subtraction</option>
+              <option value="105">98. Order of Operations: Addition and Subtraction</option>
+              <option value="104">99. Order of Operations: Multiplication and Division</option>
+              <option value="96">100. Percentages: Change</option>
+              <option value="49">101. Percentages: Increase and decrease</option>
+              <option value="95">102. Percentages: Multipliers</option>
+              <option value="8">103. Percentages: Of amounts</option>
+              <option value="78">104. Percentages: Of one amount to another</option>
+              <option value="97">105. Percentages: Repeated change</option>
+              <option value="50">106. Percentages: Reverse</option>
+              <option value="11">107. Place Value: Multiplying and dividing by powers of ten</option>
+              <option value="28">108. Place Value: Ordering numbers</option>
+              <option value="112">109. Place Value: Powers</option>
+              <option value="62">110. Polygons: Sides</option>
+              <option value="27">111. Powers and roots</option>
+              <option value="130">112. Prime Factors: Adding and subtracting surds</option>
+              <option value="160">113. Prime Factors: Calculating the product of primes</option>
+              <option value="109">114. Prime Factors: Consecutive integer product</option>
+              <option value="108">115. Prime Factors: Expressing as a product</option>
+              <option value="169">116. Prime Factors: Highest common factor (HCF) given decomposition</option>
+              <option value="17">117. Prime Factors: Highest common factors (HCF)</option>
+              <option value="118">118. Prime Factors: How many factors</option>
+              <option value="170">119. Prime Factors: Lowest common multiple (LCM) given decomposition</option>
+              <option value="18">120. Prime Factors: Lowest common multiples (LCM)</option>
+              <option value="110">121. Prime Factors: Missing products</option>
+              <option value="128">122. Prime Factors: Multiplying surds</option>
+              <option value="137">123. Prime Factors: Rationalising the denominator of a fraction with a surd</option>
+              <option value="125">124. Prime Factors: Recurring or terminating decimals</option>
+              <option value="129">125. Prime Factors: Simplifying surds</option>
+              <option value="63">126. Probability: Expected frequency</option>
+              <option value="58">127. Probability: Simple events</option>
+              <option value="53">128. Proportion: Unitary method</option>
+              <option value="139">129. Pythagoras: Distance between two points on a line</option>
+              <option value="148">130. Pythagoras: Finding a short side in a right-angled triangle</option>
+              <option value="150">131. Pythagoras: Finding the area of a right-angled triangle</option>
+              <option value="147">132. Pythagoras: Finding the hypotenuse in a right-angled triangle</option>
+              <option value="149">133. Pythagoras: Finding the perimeter of a right-angled triangle</option>
+              <option value="140">134. Quadratic Graphs: Completing a table of values</option>
+              <option value="85">135. Quadratics: Find equation given turning point</option>
+              <option value="117">136. Ratio: Changing</option>
+              <option value="93">137. Ratio: Combining two ratios into one</option>
+              <option value="52">138. Ratio: Find a share given another</option>
+              <option value="94">139. Ratio: Find a share given the difference</option>
+              <option value="92">140. Ratio: Mixed</option>
+              <option value="12">141. Ratio: Sharing a given total</option>
+              <option value="19">142. Ratio: Simplifying</option>
+              <option value="124">143. Ratio: Writing as a fraction</option>
+              <option value="123">144. Ratio: Writing in the form 1:n or n:1</option>
+              <option value="167">145. Rounding to positive powers of ten</option>
+              <option value="9">146. Rounding to significant figures</option>
+              <option value="168">147. Rounding to whole numbers and decimal places</option>
+              <option value="71">148. Sequences: Fibonacci</option>
+              <option value="21">149. Sequences: Finding a linear nth term rule</option>
+              <option value="73">150. Sequences: Finding a quadratic nth term rule</option>
+              <option value="120">151. Sequences: Finding a specific term</option>
+              <option value="47">152. Sequences: Finding the next term</option>
+              <option value="22">153. Sequences: Generating terms</option>
+              <option value="72">154. Sequences: Geometric</option>
+              <option value="26">155. Speed, distance, time</option>
+              <option value="40">156. Standard Form: Addition</option>
+              <option value="102">157. Standard Form: Converting from</option>
+              <option value="41">158. Standard Form: Converting to</option>
+              <option value="76">159. Standard Form: Division</option>
+              <option value="39">160. Standard Form: Multiplication</option>
+              <option value="75">161. Standard Form: Subtraction</option>
+              <option value="37">162. Statistics: Averages and range</option>
+              <option value="33">163. Statistics: Mean</option>
+              <option value="34">164. Statistics: Median</option>
+              <option value="36">165. Statistics: Mode</option>
+              <option value="35">166. Statistics: Range</option>
+              <option value="151">167. Trigonometry: Finding a missing angle in a right-angled triangle</option>
+              <option value="152">168. Trigonometry: Finding a missing length in a right-angled triangle</option>
+              <option value="153">169. Trigonometry: Finding the area of a right-angled triangle</option>
+              <option value="154">170. Trigonometry: Finding the perimeter of a right-angled triangle</option>
+            </select></div>
+          <h3>Difficulty</h3><label for="level2Min">Min:</label><input oninput="topicToUrl()" class="level"
+            type="number" id="level2Min" value="0" min="0" max="10"><label for="level2Max">Max:</label><input
+            oninput="topicToUrl()" class="level" type="number" id="level2Max" value="10" min="0" max="10">
+        </div>
+        <div class="questionBox border">
+          <h2>Topic 4</h2>
+          <div class="keyWordsearch"><input type="search" placeholder="Search Keyword" id="search"
+              onclick="filter(this.value, 3)" onkeyup="filter(this.value, 3)"></div>
+          <div class="topicBox"><select onchange="topicToUrl()" id="topic3">
+              <option selected="" value="0">Random</option>
+              <option value="161">1. Arithmetic: Adding decimals</option>
+              <option value="1">2. Arithmetic: Adding whole numbers</option>
+              <option value="164">3. Arithmetic: Dividing decimals</option>
+              <option value="4">4. Arithmetic: Dividing whole numbers</option>
+              <option value="163">5. Arithmetic: Multiplying decimals</option>
+              <option value="3">6. Arithmetic: Multiplying whole numbers</option>
+              <option value="162">7. Arithmetic: Subtracting decimals</option>
+              <option value="2">8. Arithmetic: Subtracting whole numbers</option>
+              <option value="165">9. Arithmetic: The four operations with decimals</option>
+              <option value="23">10. Arithmetic: The four operations with whole numbers</option>
+              <option value="122">11. Bounds: Error Intervals</option>
+              <option value="142">12. Circles: Area</option>
+              <option value="145">13. Circles: Circumference</option>
+              <option value="103">14. Circles: Stating the equation</option>
+              <option value="74">15. Converting units: Time</option>
+              <option value="141">16. Cubic Graphs: Completing a table of values</option>
+              <option value="60">17. Differences</option>
+              <option value="166">18. Directed number: Addition and subtraction with negatives</option>
+              <option value="98">19. Directed number: Addition with negatives</option>
+              <option value="146">20. Directed number: Calculating across zero</option>
+              <option value="101">21. Directed number: Division with negatives</option>
+              <option value="10">22. Directed number: Mixed operations with negatives</option>
+              <option value="100">23. Directed number: Multiplication with negatives</option>
+              <option value="61">24. Directed number: Negative temperatures</option>
+              <option value="138">25. Directed number: Rewriting as a sum</option>
+              <option value="99">26. Directed number: Subtraction with negatives</option>
+              <option value="6">27. Doubling</option>
+              <option value="107">28. Equations: If ... then ...</option>
+              <option value="44">29. Equations: Mixed</option>
+              <option value="115">30. Equations: Solving equations involving ratio</option>
+              <option value="121">31. Equations: Solving linear simultaneous</option>
+              <option value="143">32. Equations: Solving monic quadratics by factorising</option>
+              <option value="144">33. Equations: Solving non-monic quadratics by factorising</option>
+              <option value="29">34. Equations: Solving one-step equations</option>
+              <option value="38">35. Equations: Solving two-step equations</option>
+              <option value="48">36. Equations: Solving with brackets both sides</option>
+              <option value="46">37. Equations: Solving with brackets one side</option>
+              <option value="43">38. Equations: Solving with unknowns on both sides</option>
+              <option value="135">39. Expressions: Algebraic division in one variable</option>
+              <option value="136">40. Expressions: Algebraic division in two variables</option>
+              <option value="14">41. Expressions: Collecting like terms</option>
+              <option value="84">42. Expressions: Completing the square</option>
+              <option value="87">43. Expressions: Expanding binomials to monic quadratics</option>
+              <option value="134">44. Expressions: Expanding binomials to non-monic quadratics</option>
+              <option value="66">45. Expressions: Expanding brackets and simplifying </option>
+              <option value="65">46. Expressions: Expanding single brackets</option>
+              <option value="113">47. Expressions: Factorising into single brackets</option>
+              <option value="86">48. Expressions: Factorising monic quadratics</option>
+              <option value="133">49. Expressions: Factorising non-monic quadratics</option>
+              <option value="64">50. Expressions: Multiplying terms</option>
+              <option value="51">51. Expressions: Substitution</option>
+              <option value="15">52. Factors</option>
+              <option value="79">53. FDP: Converting from decimals</option>
+              <option value="80">54. FDP: Converting from fractions</option>
+              <option value="81">55. FDP: Converting from percentages</option>
+              <option value="13">56. FDP: Converting mixed</option>
+              <option value="127">57. FDP: Converting recurring decimals to fractions</option>
+              <option value="67">58. FDP: Of one amount to another</option>
+              <option value="106">59. FDP: Using decimals to find fractions</option>
+              <option value="155">60. Fractions: Adding mixed numbers</option>
+              <option value="31">61. Fractions: Addition</option>
+              <option value="42">62. Fractions: Converting improper to mixed</option>
+              <option value="111">63. Fractions: Converting mixed to improper </option>
+              <option value="157">64. Fractions: Dividing mixed numbers</option>
+              <option value="114">65. Fractions: Division</option>
+              <option value="54">66. Fractions: Four operations</option>
+              <option value="59">67. Fractions: Increase and decrease</option>
+              <option value="116">68. Fractions: Integers between improper fractions</option>
+              <option value="32">69. Fractions: Multiplication</option>
+              <option value="156">70. Fractions: Multiplying mixed numbers</option>
+              <option value="7">71. Fractions: Of amounts</option>
+              <option value="77">72. Fractions: Of one amount to another</option>
+              <option value="20">73. Fractions: Simplifying</option>
+              <option value="159">74. Fractions: Subtracting mixed numbers</option>
+              <option value="158">75. Fractions: Subtraction</option>
+              <option value="132">76. Functions: Find an input given an output</option>
+              <option value="131">77. Functions: Find an output given an input</option>
+              <option value="82">78. Graphs: Gradient between two points on a line</option>
+              <option value="83">79. Graphs: Midpoint between two points on a line</option>
+              <option value="5">80. Halving</option>
+              <option value="89">81. Indices: Division law</option>
+              <option value="91">82. Indices: Mixed Laws</option>
+              <option value="88">83. Indices: Multiplication law</option>
+              <option value="90">84. Indices: Power law</option>
+              <option value="68">85. Inequalities: Solving 1 step</option>
+              <option value="69">86. Inequalities: Solving 2 step</option>
+              <option value="70">87. Inequalities: Solving unknowns on both sides</option>
+              <option value="126">88. Linear Graphs: Completing a table of values</option>
+              <option value="45">89. Metric units: Converting lengths</option>
+              <option value="57">90. Metric units: Converting mixed units</option>
+              <option value="56">91. Metric units: Converting volume</option>
+              <option value="55">92. Metric units: Converting weights</option>
+              <option value="24">93. Money: Adding coins</option>
+              <option value="25">94. Money: Counting coins</option>
+              <option value="16">95. Multiples</option>
+              <option value="119">96. Number bonds: Adding close powers of ten</option>
+              <option value="30">97. Number bonds: Addition and Subtraction</option>
+              <option value="105">98. Order of Operations: Addition and Subtraction</option>
+              <option value="104">99. Order of Operations: Multiplication and Division</option>
+              <option value="96">100. Percentages: Change</option>
+              <option value="49">101. Percentages: Increase and decrease</option>
+              <option value="95">102. Percentages: Multipliers</option>
+              <option value="8">103. Percentages: Of amounts</option>
+              <option value="78">104. Percentages: Of one amount to another</option>
+              <option value="97">105. Percentages: Repeated change</option>
+              <option value="50">106. Percentages: Reverse</option>
+              <option value="11">107. Place Value: Multiplying and dividing by powers of ten</option>
+              <option value="28">108. Place Value: Ordering numbers</option>
+              <option value="112">109. Place Value: Powers</option>
+              <option value="62">110. Polygons: Sides</option>
+              <option value="27">111. Powers and roots</option>
+              <option value="130">112. Prime Factors: Adding and subtracting surds</option>
+              <option value="160">113. Prime Factors: Calculating the product of primes</option>
+              <option value="109">114. Prime Factors: Consecutive integer product</option>
+              <option value="108">115. Prime Factors: Expressing as a product</option>
+              <option value="169">116. Prime Factors: Highest common factor (HCF) given decomposition</option>
+              <option value="17">117. Prime Factors: Highest common factors (HCF)</option>
+              <option value="118">118. Prime Factors: How many factors</option>
+              <option value="170">119. Prime Factors: Lowest common multiple (LCM) given decomposition</option>
+              <option value="18">120. Prime Factors: Lowest common multiples (LCM)</option>
+              <option value="110">121. Prime Factors: Missing products</option>
+              <option value="128">122. Prime Factors: Multiplying surds</option>
+              <option value="137">123. Prime Factors: Rationalising the denominator of a fraction with a surd</option>
+              <option value="125">124. Prime Factors: Recurring or terminating decimals</option>
+              <option value="129">125. Prime Factors: Simplifying surds</option>
+              <option value="63">126. Probability: Expected frequency</option>
+              <option value="58">127. Probability: Simple events</option>
+              <option value="53">128. Proportion: Unitary method</option>
+              <option value="139">129. Pythagoras: Distance between two points on a line</option>
+              <option value="148">130. Pythagoras: Finding a short side in a right-angled triangle</option>
+              <option value="150">131. Pythagoras: Finding the area of a right-angled triangle</option>
+              <option value="147">132. Pythagoras: Finding the hypotenuse in a right-angled triangle</option>
+              <option value="149">133. Pythagoras: Finding the perimeter of a right-angled triangle</option>
+              <option value="140">134. Quadratic Graphs: Completing a table of values</option>
+              <option value="85">135. Quadratics: Find equation given turning point</option>
+              <option value="117">136. Ratio: Changing</option>
+              <option value="93">137. Ratio: Combining two ratios into one</option>
+              <option value="52">138. Ratio: Find a share given another</option>
+              <option value="94">139. Ratio: Find a share given the difference</option>
+              <option value="92">140. Ratio: Mixed</option>
+              <option value="12">141. Ratio: Sharing a given total</option>
+              <option value="19">142. Ratio: Simplifying</option>
+              <option value="124">143. Ratio: Writing as a fraction</option>
+              <option value="123">144. Ratio: Writing in the form 1:n or n:1</option>
+              <option value="167">145. Rounding to positive powers of ten</option>
+              <option value="9">146. Rounding to significant figures</option>
+              <option value="168">147. Rounding to whole numbers and decimal places</option>
+              <option value="71">148. Sequences: Fibonacci</option>
+              <option value="21">149. Sequences: Finding a linear nth term rule</option>
+              <option value="73">150. Sequences: Finding a quadratic nth term rule</option>
+              <option value="120">151. Sequences: Finding a specific term</option>
+              <option value="47">152. Sequences: Finding the next term</option>
+              <option value="22">153. Sequences: Generating terms</option>
+              <option value="72">154. Sequences: Geometric</option>
+              <option value="26">155. Speed, distance, time</option>
+              <option value="40">156. Standard Form: Addition</option>
+              <option value="102">157. Standard Form: Converting from</option>
+              <option value="41">158. Standard Form: Converting to</option>
+              <option value="76">159. Standard Form: Division</option>
+              <option value="39">160. Standard Form: Multiplication</option>
+              <option value="75">161. Standard Form: Subtraction</option>
+              <option value="37">162. Statistics: Averages and range</option>
+              <option value="33">163. Statistics: Mean</option>
+              <option value="34">164. Statistics: Median</option>
+              <option value="36">165. Statistics: Mode</option>
+              <option value="35">166. Statistics: Range</option>
+              <option value="151">167. Trigonometry: Finding a missing angle in a right-angled triangle</option>
+              <option value="152">168. Trigonometry: Finding a missing length in a right-angled triangle</option>
+              <option value="153">169. Trigonometry: Finding the area of a right-angled triangle</option>
+              <option value="154">170. Trigonometry: Finding the perimeter of a right-angled triangle</option>
+            </select></div>
+          <h3>Difficulty</h3><label for="level3Min">Min:</label><input oninput="topicToUrl()" class="level"
+            type="number" id="level3Min" value="0" min="0" max="10"><label for="level3Max">Max:</label><input
+            oninput="topicToUrl()" class="level" type="number" id="level3Max" value="10" min="0" max="10">
+        </div>
+      </div>
+
+  </section>
+  <section id="questionsIWB">
+
+  </section>
+
+  <script defer="" src="./Maths Question Generator_files/v833ccba57c9e4d2798f2e76cebdd09a11778172276447"
+    integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ=="
+    data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;ec1615efb8554694be5a213ca4aa0d02&quot;,&quot;r&quot;:1,&quot;server_timing&quot;:{&quot;name&quot;:{&quot;cfCacheStatus&quot;:true,&quot;cfEdge&quot;:true,&quot;cfExtPri&quot;:true,&quot;cfL4&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfSpeedBrain&quot;:true},&quot;location_startswith&quot;:null}}"
+    crossorigin="anonymous"></script>
+
+  <script>
+    var strands = new Array("Number", "Algebra", "Geometry & Measures", "Ratio & Proportion", "Probability", "Statistics");
+    var topics = [];
+    var columns = 3;
+    var question = [];
+    var totalQuestions = 10;
+    var level = 0;
+    var showingAnswers = false;
+    topics[0] = []; topics[0][0] = {}; topics[0][0].topic = "Arithmetic: Adding decimals"; topics[0][0].id = "161"; topics[0][1] = {}; topics[0][1].topic = "Arithmetic: Adding whole numbers"; topics[0][1].id = "1"; topics[0][2] = {}; topics[0][2].topic = "Arithmetic: Dividing decimals"; topics[0][2].id = "164"; topics[0][3] = {}; topics[0][3].topic = "Arithmetic: Dividing whole numbers"; topics[0][3].id = "4"; topics[0][4] = {}; topics[0][4].topic = "Arithmetic: Multiplying decimals"; topics[0][4].id = "163"; topics[0][5] = {}; topics[0][5].topic = "Arithmetic: Multiplying whole numbers"; topics[0][5].id = "3"; topics[0][6] = {}; topics[0][6].topic = "Arithmetic: Subtracting decimals"; topics[0][6].id = "162"; topics[0][7] = {}; topics[0][7].topic = "Arithmetic: Subtracting whole numbers"; topics[0][7].id = "2"; topics[0][8] = {}; topics[0][8].topic = "Arithmetic: The four operations with decimals"; topics[0][8].id = "165"; topics[0][9] = {}; topics[0][9].topic = "Arithmetic: The four operations with whole numbers"; topics[0][9].id = "23"; topics[0][10] = {}; topics[0][10].topic = "Bounds: Error Intervals"; topics[0][10].id = "122"; topics[0][11] = {}; topics[0][11].topic = "Differences"; topics[0][11].id = "60"; topics[0][12] = {}; topics[0][12].topic = "Directed number: Addition and subtraction with negatives"; topics[0][12].id = "166"; topics[0][13] = {}; topics[0][13].topic = "Directed number: Addition with negatives"; topics[0][13].id = "98"; topics[0][14] = {}; topics[0][14].topic = "Directed number: Calculating across zero"; topics[0][14].id = "146"; topics[0][15] = {}; topics[0][15].topic = "Directed number: Division with negatives"; topics[0][15].id = "101"; topics[0][16] = {}; topics[0][16].topic = "Directed number: Mixed operations with negatives"; topics[0][16].id = "10"; topics[0][17] = {}; topics[0][17].topic = "Directed number: Multiplication with negatives"; topics[0][17].id = "100"; topics[0][18] = {}; topics[0][18].topic = "Directed number: Negative temperatures"; topics[0][18].id = "61"; topics[0][19] = {}; topics[0][19].topic = "Directed number: Rewriting as a sum"; topics[0][19].id = "138"; topics[0][20] = {}; topics[0][20].topic = "Directed number: Subtraction with negatives"; topics[0][20].id = "99"; topics[0][21] = {}; topics[0][21].topic = "Doubling"; topics[0][21].id = "6"; topics[0][22] = {}; topics[0][22].topic = "Factors"; topics[0][22].id = "15"; topics[0][23] = {}; topics[0][23].topic = "FDP: Converting from decimals"; topics[0][23].id = "79"; topics[0][24] = {}; topics[0][24].topic = "FDP: Converting from fractions"; topics[0][24].id = "80"; topics[0][25] = {}; topics[0][25].topic = "FDP: Converting from percentages"; topics[0][25].id = "81"; topics[0][26] = {}; topics[0][26].topic = "FDP: Converting recurring decimals to fractions"; topics[0][26].id = "127"; topics[0][27] = {}; topics[0][27].topic = "FDP: Using decimals to find fractions"; topics[0][27].id = "106"; topics[0][28] = {}; topics[0][28].topic = "Fractions: Adding mixed numbers"; topics[0][28].id = "155"; topics[0][29] = {}; topics[0][29].topic = "Fractions: Addition"; topics[0][29].id = "31"; topics[0][30] = {}; topics[0][30].topic = "Fractions: Converting improper to mixed"; topics[0][30].id = "42"; topics[0][31] = {}; topics[0][31].topic = "Fractions: Converting mixed to improper "; topics[0][31].id = "111"; topics[0][32] = {}; topics[0][32].topic = "Fractions: Dividing mixed numbers"; topics[0][32].id = "157"; topics[0][33] = {}; topics[0][33].topic = "Fractions: Division"; topics[0][33].id = "114"; topics[0][34] = {}; topics[0][34].topic = "Fractions: Four operations"; topics[0][34].id = "54"; topics[0][35] = {}; topics[0][35].topic = "Fractions: Increase and decrease"; topics[0][35].id = "59"; topics[0][36] = {}; topics[0][36].topic = "Fractions: Integers between improper fractions"; topics[0][36].id = "116"; topics[0][37] = {}; topics[0][37].topic = "Fractions: Multiplication"; topics[0][37].id = "32"; topics[0][38] = {}; topics[0][38].topic = "Fractions: Multiplying mixed numbers"; topics[0][38].id = "156"; topics[0][39] = {}; topics[0][39].topic = "Fractions: Of amounts"; topics[0][39].id = "7"; topics[0][40] = {}; topics[0][40].topic = "Fractions: Of one amount to another"; topics[0][40].id = "77"; topics[0][41] = {}; topics[0][41].topic = "Fractions: Simplifying"; topics[0][41].id = "20"; topics[0][42] = {}; topics[0][42].topic = "Fractions: Subtracting mixed numbers"; topics[0][42].id = "159"; topics[0][43] = {}; topics[0][43].topic = "Fractions: Subtraction"; topics[0][43].id = "158"; topics[0][44] = {}; topics[0][44].topic = "Halving"; topics[0][44].id = "5"; topics[0][45] = {}; topics[0][45].topic = "Indices: Division law"; topics[0][45].id = "89"; topics[0][46] = {}; topics[0][46].topic = "Indices: Mixed Laws"; topics[0][46].id = "91"; topics[0][47] = {}; topics[0][47].topic = "Indices: Multiplication law"; topics[0][47].id = "88"; topics[0][48] = {}; topics[0][48].topic = "Indices: Power law"; topics[0][48].id = "90"; topics[0][49] = {}; topics[0][49].topic = "Multiples"; topics[0][49].id = "16"; topics[0][50] = {}; topics[0][50].topic = "Number bonds: Adding close powers of ten"; topics[0][50].id = "119"; topics[0][51] = {}; topics[0][51].topic = "Order of Operations: Addition and Subtraction"; topics[0][51].id = "105"; topics[0][52] = {}; topics[0][52].topic = "Order of Operations: Multiplication and Division"; topics[0][52].id = "104"; topics[0][53] = {}; topics[0][53].topic = "Percentages: Of one amount to another"; topics[0][53].id = "78"; topics[0][54] = {}; topics[0][54].topic = "Place Value: Multiplying and dividing by powers of ten"; topics[0][54].id = "11"; topics[0][55] = {}; topics[0][55].topic = "Place Value: Ordering numbers"; topics[0][55].id = "28"; topics[0][56] = {}; topics[0][56].topic = "Place Value: Powers"; topics[0][56].id = "112"; topics[0][57] = {}; topics[0][57].topic = "Powers and roots"; topics[0][57].id = "27"; topics[0][58] = {}; topics[0][58].topic = "Prime Factors: Adding and subtracting surds"; topics[0][58].id = "130"; topics[0][59] = {}; topics[0][59].topic = "Prime Factors: Calculating the product of primes"; topics[0][59].id = "160"; topics[0][60] = {}; topics[0][60].topic = "Prime Factors: Consecutive integer product"; topics[0][60].id = "109"; topics[0][61] = {}; topics[0][61].topic = "Prime Factors: Expressing as a product"; topics[0][61].id = "108"; topics[0][62] = {}; topics[0][62].topic = "Prime Factors: Highest common factor (HCF) given decomposition"; topics[0][62].id = "169"; topics[0][63] = {}; topics[0][63].topic = "Prime Factors: Highest common factors (HCF)"; topics[0][63].id = "17"; topics[0][64] = {}; topics[0][64].topic = "Prime Factors: How many factors"; topics[0][64].id = "118"; topics[0][65] = {}; topics[0][65].topic = "Prime Factors: Lowest common multiple (LCM) given decomposition"; topics[0][65].id = "170"; topics[0][66] = {}; topics[0][66].topic = "Prime Factors: Lowest common multiples (LCM)"; topics[0][66].id = "18"; topics[0][67] = {}; topics[0][67].topic = "Prime Factors: Missing products"; topics[0][67].id = "110"; topics[0][68] = {}; topics[0][68].topic = "Prime Factors: Multiplying surds"; topics[0][68].id = "128"; topics[0][69] = {}; topics[0][69].topic = "Prime Factors: Rationalising the denominator of a fraction with a surd"; topics[0][69].id = "137"; topics[0][70] = {}; topics[0][70].topic = "Prime Factors: Recurring or terminating decimals"; topics[0][70].id = "125"; topics[0][71] = {}; topics[0][71].topic = "Prime Factors: Simplifying surds"; topics[0][71].id = "129"; topics[0][72] = {}; topics[0][72].topic = "Rounding to positive powers of ten"; topics[0][72].id = "167"; topics[0][73] = {}; topics[0][73].topic = "Rounding to significant figures"; topics[0][73].id = "9"; topics[0][74] = {}; topics[0][74].topic = "Rounding to whole numbers and decimal places"; topics[0][74].id = "168"; topics[0][75] = {}; topics[0][75].topic = "Standard Form: Addition"; topics[0][75].id = "40"; topics[0][76] = {}; topics[0][76].topic = "Standard Form: Converting from"; topics[0][76].id = "102"; topics[0][77] = {}; topics[0][77].topic = "Standard Form: Converting to"; topics[0][77].id = "41"; topics[0][78] = {}; topics[0][78].topic = "Standard Form: Division"; topics[0][78].id = "76"; topics[0][79] = {}; topics[0][79].topic = "Standard Form: Multiplication"; topics[0][79].id = "39"; topics[0][80] = {}; topics[0][80].topic = "Standard Form: Subtraction"; topics[0][80].id = "75"; topics[1] = []; topics[1][0] = {}; topics[1][0].topic = "Circles: Stating the equation"; topics[1][0].id = "103"; topics[1][1] = {}; topics[1][1].topic = "Cubic Graphs: Completing a table of values"; topics[1][1].id = "141"; topics[1][2] = {}; topics[1][2].topic = "Equations: If ... then ..."; topics[1][2].id = "107"; topics[1][3] = {}; topics[1][3].topic = "Equations: Mixed"; topics[1][3].id = "44"; topics[1][4] = {}; topics[1][4].topic = "Equations: Solving equations involving ratio"; topics[1][4].id = "115"; topics[1][5] = {}; topics[1][5].topic = "Equations: Solving linear simultaneous"; topics[1][5].id = "121"; topics[1][6] = {}; topics[1][6].topic = "Equations: Solving monic quadratics by factorising"; topics[1][6].id = "143"; topics[1][7] = {}; topics[1][7].topic = "Equations: Solving non-monic quadratics by factorising"; topics[1][7].id = "144"; topics[1][8] = {}; topics[1][8].topic = "Equations: Solving one-step equations"; topics[1][8].id = "29"; topics[1][9] = {}; topics[1][9].topic = "Equations: Solving two-step equations"; topics[1][9].id = "38"; topics[1][10] = {}; topics[1][10].topic = "Equations: Solving with brackets both sides"; topics[1][10].id = "48"; topics[1][11] = {}; topics[1][11].topic = "Equations: Solving with brackets one side"; topics[1][11].id = "46"; topics[1][12] = {}; topics[1][12].topic = "Equations: Solving with unknowns on both sides"; topics[1][12].id = "43"; topics[1][13] = {}; topics[1][13].topic = "Expressions: Algebraic division in one variable"; topics[1][13].id = "135"; topics[1][14] = {}; topics[1][14].topic = "Expressions: Algebraic division in two variables"; topics[1][14].id = "136"; topics[1][15] = {}; topics[1][15].topic = "Expressions: Collecting like terms"; topics[1][15].id = "14"; topics[1][16] = {}; topics[1][16].topic = "Expressions: Completing the square"; topics[1][16].id = "84"; topics[1][17] = {}; topics[1][17].topic = "Expressions: Expanding binomials to monic quadratics"; topics[1][17].id = "87"; topics[1][18] = {}; topics[1][18].topic = "Expressions: Expanding binomials to non-monic quadratics"; topics[1][18].id = "134"; topics[1][19] = {}; topics[1][19].topic = "Expressions: Expanding brackets and simplifying "; topics[1][19].id = "66"; topics[1][20] = {}; topics[1][20].topic = "Expressions: Expanding single brackets"; topics[1][20].id = "65"; topics[1][21] = {}; topics[1][21].topic = "Expressions: Factorising into single brackets"; topics[1][21].id = "113"; topics[1][22] = {}; topics[1][22].topic = "Expressions: Factorising monic quadratics"; topics[1][22].id = "86"; topics[1][23] = {}; topics[1][23].topic = "Expressions: Factorising non-monic quadratics"; topics[1][23].id = "133"; topics[1][24] = {}; topics[1][24].topic = "Expressions: Multiplying terms"; topics[1][24].id = "64"; topics[1][25] = {}; topics[1][25].topic = "Expressions: Substitution"; topics[1][25].id = "51"; topics[1][26] = {}; topics[1][26].topic = "Functions: Find an input given an output"; topics[1][26].id = "132"; topics[1][27] = {}; topics[1][27].topic = "Functions: Find an output given an input"; topics[1][27].id = "131"; topics[1][28] = {}; topics[1][28].topic = "Graphs: Gradient between two points on a line"; topics[1][28].id = "82"; topics[1][29] = {}; topics[1][29].topic = "Graphs: Midpoint between two points on a line"; topics[1][29].id = "83"; topics[1][30] = {}; topics[1][30].topic = "Inequalities: Solving 1 step"; topics[1][30].id = "68"; topics[1][31] = {}; topics[1][31].topic = "Inequalities: Solving 2 step"; topics[1][31].id = "69"; topics[1][32] = {}; topics[1][32].topic = "Inequalities: Solving unknowns on both sides"; topics[1][32].id = "70"; topics[1][33] = {}; topics[1][33].topic = "Linear Graphs: Completing a table of values"; topics[1][33].id = "126"; topics[1][34] = {}; topics[1][34].topic = "Number bonds: Addition and Subtraction"; topics[1][34].id = "30"; topics[1][35] = {}; topics[1][35].topic = "Quadratic Graphs: Completing a table of values"; topics[1][35].id = "140"; topics[1][36] = {}; topics[1][36].topic = "Quadratics: Find equation given turning point"; topics[1][36].id = "85"; topics[1][37] = {}; topics[1][37].topic = "Sequences: Fibonacci"; topics[1][37].id = "71"; topics[1][38] = {}; topics[1][38].topic = "Sequences: Finding a linear nth term rule"; topics[1][38].id = "21"; topics[1][39] = {}; topics[1][39].topic = "Sequences: Finding a quadratic nth term rule"; topics[1][39].id = "73"; topics[1][40] = {}; topics[1][40].topic = "Sequences: Finding a specific term"; topics[1][40].id = "120"; topics[1][41] = {}; topics[1][41].topic = "Sequences: Finding the next term"; topics[1][41].id = "47"; topics[1][42] = {}; topics[1][42].topic = "Sequences: Generating terms"; topics[1][42].id = "22"; topics[1][43] = {}; topics[1][43].topic = "Sequences: Geometric"; topics[1][43].id = "72"; topics[2] = []; topics[2][0] = {}; topics[2][0].topic = "Circles: Area"; topics[2][0].id = "142"; topics[2][1] = {}; topics[2][1].topic = "Circles: Circumference"; topics[2][1].id = "145"; topics[2][2] = {}; topics[2][2].topic = "Converting units: Time"; topics[2][2].id = "74"; topics[2][3] = {}; topics[2][3].topic = "Metric units: Converting lengths"; topics[2][3].id = "45"; topics[2][4] = {}; topics[2][4].topic = "Metric units: Converting mixed units"; topics[2][4].id = "57"; topics[2][5] = {}; topics[2][5].topic = "Metric units: Converting volume"; topics[2][5].id = "56"; topics[2][6] = {}; topics[2][6].topic = "Metric units: Converting weights"; topics[2][6].id = "55"; topics[2][7] = {}; topics[2][7].topic = "Money: Adding coins"; topics[2][7].id = "24"; topics[2][8] = {}; topics[2][8].topic = "Money: Counting coins"; topics[2][8].id = "25"; topics[2][9] = {}; topics[2][9].topic = "Polygons: Sides"; topics[2][9].id = "62"; topics[2][10] = {}; topics[2][10].topic = "Pythagoras: Distance between two points on a line"; topics[2][10].id = "139"; topics[2][11] = {}; topics[2][11].topic = "Pythagoras: Finding a short side in a right-angled triangle"; topics[2][11].id = "148"; topics[2][12] = {}; topics[2][12].topic = "Pythagoras: Finding the area of a right-angled triangle"; topics[2][12].id = "150"; topics[2][13] = {}; topics[2][13].topic = "Pythagoras: Finding the hypotenuse in a right-angled triangle"; topics[2][13].id = "147"; topics[2][14] = {}; topics[2][14].topic = "Pythagoras: Finding the perimeter of a right-angled triangle"; topics[2][14].id = "149"; topics[2][15] = {}; topics[2][15].topic = "Speed, distance, time"; topics[2][15].id = "26"; topics[2][16] = {}; topics[2][16].topic = "Trigonometry: Finding a missing angle in a right-angled triangle"; topics[2][16].id = "151"; topics[2][17] = {}; topics[2][17].topic = "Trigonometry: Finding a missing length in a right-angled triangle"; topics[2][17].id = "152"; topics[2][18] = {}; topics[2][18].topic = "Trigonometry: Finding the area of a right-angled triangle"; topics[2][18].id = "153"; topics[2][19] = {}; topics[2][19].topic = "Trigonometry: Finding the perimeter of a right-angled triangle"; topics[2][19].id = "154"; topics[3] = []; topics[3][0] = {}; topics[3][0].topic = "FDP: Converting mixed"; topics[3][0].id = "13"; topics[3][1] = {}; topics[3][1].topic = "FDP: Of one amount to another"; topics[3][1].id = "67"; topics[3][2] = {}; topics[3][2].topic = "Percentages: Change"; topics[3][2].id = "96"; topics[3][3] = {}; topics[3][3].topic = "Percentages: Increase and decrease"; topics[3][3].id = "49"; topics[3][4] = {}; topics[3][4].topic = "Percentages: Multipliers"; topics[3][4].id = "95"; topics[3][5] = {}; topics[3][5].topic = "Percentages: Of amounts"; topics[3][5].id = "8"; topics[3][6] = {}; topics[3][6].topic = "Percentages: Repeated change"; topics[3][6].id = "97"; topics[3][7] = {}; topics[3][7].topic = "Percentages: Reverse"; topics[3][7].id = "50"; topics[3][8] = {}; topics[3][8].topic = "Proportion: Unitary method"; topics[3][8].id = "53"; topics[3][9] = {}; topics[3][9].topic = "Ratio: Changing"; topics[3][9].id = "117"; topics[3][10] = {}; topics[3][10].topic = "Ratio: Combining two ratios into one"; topics[3][10].id = "93"; topics[3][11] = {}; topics[3][11].topic = "Ratio: Find a share given another"; topics[3][11].id = "52"; topics[3][12] = {}; topics[3][12].topic = "Ratio: Find a share given the difference"; topics[3][12].id = "94"; topics[3][13] = {}; topics[3][13].topic = "Ratio: Mixed"; topics[3][13].id = "92"; topics[3][14] = {}; topics[3][14].topic = "Ratio: Sharing a given total"; topics[3][14].id = "12"; topics[3][15] = {}; topics[3][15].topic = "Ratio: Simplifying"; topics[3][15].id = "19"; topics[3][16] = {}; topics[3][16].topic = "Ratio: Writing as a fraction"; topics[3][16].id = "124"; topics[3][17] = {}; topics[3][17].topic = "Ratio: Writing in the form 1:n or n:1"; topics[3][17].id = "123"; topics[4] = []; topics[4][0] = {}; topics[4][0].topic = "Probability: Expected frequency"; topics[4][0].id = "63"; topics[4][1] = {}; topics[4][1].topic = "Probability: Simple events"; topics[4][1].id = "58"; topics[5] = []; topics[5][0] = {}; topics[5][0].topic = "Statistics: Averages and range"; topics[5][0].id = "37"; topics[5][1] = {}; topics[5][1].topic = "Statistics: Mean"; topics[5][1].id = "33"; topics[5][2] = {}; topics[5][2].topic = "Statistics: Median"; topics[5][2].id = "34"; topics[5][3] = {}; topics[5][3].topic = "Statistics: Mode"; topics[5][3].id = "36"; topics[5][4] = {}; topics[5][4].topic = "Statistics: Range"; topics[5][4].id = "35"; var elem = document.documentElement;
+    function toggleFS() {
+      if (!document.isFullScreen && !document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+        elem.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    function topicToUrl() {
+      var t0 = "id0=" + document.getElementById('topic0').value;
+      t0 += "&min0=" + document.getElementById('level0Min').value;
+      t0 += "&max0=" + document.getElementById('level0Max').value;
+      var t1 = "id1=" + document.getElementById('topic1').value;
+      t1 += "&min1=" + document.getElementById('level1Min').value;
+      t1 += "&max1=" + document.getElementById('level1Max').value;
+      var t2 = "id2=" + document.getElementById('topic2').value;
+      t2 += "&min2=" + document.getElementById('level2Min').value;
+      t2 += "&max2=" + document.getElementById('level2Max').value;
+      var t3 = "id3=" + document.getElementById('topic3').value;
+      t3 += "&min3=" + document.getElementById('level3Min').value;
+      t3 += "&max3=" + document.getElementById('level3Max').value;
+      window.history.replaceState(null, null, "?" + t0 + "&" + t1 + "&" + t2 + "&" + t3);
+    }
+    function setUp() {
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const id0 = urlParams.get('id0');
+      for (var i = 0; i < topic0.length; i++) {
+        if (topic0[i].value === id0) {
+          topic0[i].selected = true;
+        }
+      }
+      const id1 = urlParams.get('id1');
+      for (var i = 0; i < topic1.length; i++) {
+        if (topic1[i].value === id1) {
+          topic1[i].selected = true;
+        }
+      }
+      const id2 = urlParams.get('id2');
+      for (var i = 0; i < topic2.length; i++) {
+        if (topic2[i].value === id2) {
+          topic2[i].selected = true;
+        }
+      }
+      const id3 = urlParams.get('id3');
+      for (var i = 0; i < topic3.length; i++) {
+        if (topic3[i].value === id3) {
+          topic3[i].selected = true;
+        }
+      }
+      if (id0 && id1 && id2 && id3) {
+        document.getElementById('level0Min').value = urlParams.get('min0');
+        document.getElementById('level0Max').value = urlParams.get('max0');
+        document.getElementById('level1Min').value = urlParams.get('min1');
+        document.getElementById('level1Max').value = urlParams.get('max1');
+        document.getElementById('level2Min').value = urlParams.get('min2');
+        document.getElementById('level2Max').value = urlParams.get('max2');
+        document.getElementById('level3Min').value = urlParams.get('min3');
+        document.getElementById('level3Max').value = urlParams.get('max3');
+      }
+    }
+
+    function openResource(type, id) {
+      switch (type) {
+        case 1:
+          localStorage.setItem("q", question[id].question);
+          window.open("/cam", "_blank");
+          break;
+        case 2:
+          window.open("/epp?id=" + topicSelect.value, "_blank");
+          break;
+      }
+    }
+    function stripLatex(text) {
+      var s = text;
+      // Remove LaTeX delimiters
+      s = s.replace(/\\\(/g, '');
+      s = s.replace(/\\\)/g, '');
+      s = s.replace(/\\\[/g, '');
+      s = s.replace(/\\\]/g, '');
+      s = s.replace(/\$/g, '');
+      // Replace common LaTeX commands with symbols
+      s = s.replace(/\\times/g, '×');
+      s = s.replace(/\\div/g, '÷');
+      s = s.replace(/\\pm/g, '±');
+      s = s.replace(/\\leq/g, '≤');
+      s = s.replace(/\\geq/g, '≥');
+      s = s.replace(/\\neq/g, '≠');
+      s = s.replace(/\\lt/g, '<');
+      s = s.replace(/\\gt/g, '>');
+      s = s.replace(/\\cdot/g, '·');
+      // Handle fractions: \frac{a}{b} -> a/b
+      s = s.replace(/\\frac\{([^}]*)\}\{([^}]*)\}/g, '$1/$2');
+      // Handle superscripts: ^{n} -> ^n
+      s = s.replace(/\^\{([^}]*)\}/g, '^$1');
+      // Handle subscripts: _{n} -> _n
+      s = s.replace(/_\{([^}]*)\}/g, '_$1');
+      // Remove \text{} wrapper
+      s = s.replace(/\\text\{([^}]*)\}/g, '$1');
+      // Remove \sqrt{} -> √()
+      s = s.replace(/\\sqrt\{([^}]*)\}/g, '√($1)');
+      // Remove remaining curly braces
+      s = s.replace(/[{}]/g, '');
+      // Remove any remaining backslashes before letters
+      s = s.replace(/\\([a-zA-Z]+)/g, '$1');
+      // Remove backslash-space (LaTeX space command)
+      s = s.replace(/\\ /g, ' ');
+      // Remove any remaining lone backslashes
+      s = s.replace(/\\/g, '');
+      // Clean up extra spaces
+      s = s.replace(/\s+/g, ' ').trim();
+      // Remove HTML tags
+      s = s.replace(/<[^>]*>/g, '');
+      // Decode HTML entities
+      var tmp = document.createElement('textarea');
+      tmp.innerHTML = s;
+      s = tmp.value;
+      return s;
+    }
+    function createSheet() {
+      question = [];
+      columns = 1;
+      totalQuestions = parseInt(totalQuestionsSelect.value);
+      if (totalQuestions < 1) {
+        totalQuestions = 1;
+        totalQuestionsSelect.value = 1;
+      }
+      if (totalQuestions > 50) {
+        totalQuestions = 50;
+        totalQuestionsSelect.value = 50;
+      }
+      showingAnswers = false;
+      answerButton.innerHTML = "Show Answers";
+      var data = "<div class='question-list'><div class='question-column'>";
+      for (var i = 0; i < totalQuestions; i++) {
+        var min = parseInt(document.getElementById("level0Min").value);
+        var max = parseInt(document.getElementById("level0Max").value);
+        var step = (max - min) / (totalQuestions);
+        var level = Math.floor(min + step * i);
+        if (level < 0) {
+          level = 0;
+        }
+        if (level > 10) {
+          level = 10;
+        }
+        getQuestion(document.getElementById("topic0").value, level / 10);
+        var attempts = 0;
+        do {
+          var repeat = false;
+          var newlyAdded = question.length - 1;
+          for (var k = 0; k < newlyAdded; k++) {
+            if (question[newlyAdded].answer === question[k].answer) {
+              repeat = true;
+              break;
+            }
+          }
+          if (repeat) {
+            getQuestion(document.getElementById("topic0").value, level / 10);
+            question[newlyAdded] = question[question.length - 1];
+            question.pop();
+            attempts++;
+            if (attempts % 40 === 0) {
+              level++;
+            }
+          }
+        } while (repeat === true && attempts < 300);
+        question[(question.length - 1)].showingQuestion = true;
+        if (i > 0 && i % 25 === 0) {
+          data += "</div><div class='question-column'>";
+        }
+        data += "<div class='question-item' style='font-size:" + parseInt(fontSize.value) + "px;' onclick='toggleAnswer(" + (question.length - 1) + ")' id='a" + (question.length - 1) + "'>";
+        data += "<span class='q-number'>" + (i + 1) + ")</span> ";
+        data += "<span class='q-content'>" + stripLatex(question[question.length - 1].question) + " =</span>";
+        data += "</div>";
+      }
+      data += "</div></div>";
+      document.getElementById('questionsIWB').innerHTML = data;
+      document.getElementById('questionsIWB').style.display = "block";
+      document.getElementById('answerButton').style.display = "inline-block";
+      document.getElementById('menuButton').style.display = "inline-block";
+      document.getElementById('printButton').style.display = "inline-block";
+      document.getElementById('topicMenu').style.display = "none";
+      MathJax.typesetPromise();
+    }
+    function displayQuestions() {
+      var data = "<div class='question-list'><div class='question-column'>";
+      for (var i = 0; i < totalQuestions; i++) {
+        if (i > 0 && i % 25 === 0) {
+          data += "</div><div class='question-column'>";
+        }
+        data += "<div class='question-item' style='font-size:" + parseInt(fontSize.value) + "px;' onclick='toggleAnswer(" + i + ")' id='a" + i + "'>";
+        data += "<span class='q-number'>" + (i + 1) + ")</span> ";
+        data += "<span class='q-content'>" + stripLatex(question[i].question) + " =</span>";
+        data += "</div>";
+      }
+      data += "</div></div>";
+      document.getElementById('questionsIWB').innerHTML = data;
+      MathJax.typesetPromise();
+    }
+    function printQuestions() {
+      window.print();
+    }
+    function showMenu() {
+      document.getElementById('questionsIWB').style.display = "none";
+      document.getElementById('topicMenu').style.display = "block";
+      document.getElementById('answerButton').style.display = "none";
+      document.getElementById('menuButton').style.display = "none";
+    }
+
+    function toggleAnswer(i) {
+      if (event.shiftKey) {
+        openResource(1, i);
+      } else {
+        var el = document.getElementById('a' + i);
+        if (question[i].showingQuestion) {
+          el.innerHTML = "<span class='q-number'>" + (i + 1) + ")</span> <span class='q-content'>" + stripLatex(question[i].answer) + "</span>";
+          question[i].showingQuestion = false;
+        } else {
+          el.innerHTML = "<span class='q-number'>" + (i + 1) + ")</span> <span class='q-content'>" + stripLatex(question[i].question) + " =</span>";
+          question[i].showingQuestion = true;
+        }
+        MathJax.typesetPromise();
+      }
+    }
+    function filter(keyword, x) {
+      var id = "topic" + x;
+      for (var i = 0; i < document.getElementById(id).length; i++) {
+        var txt = document.getElementById(id).options[i].text;
+        var include = txt.toLowerCase().search(keyword.toLowerCase());
+        if (include > -1) {
+          document.getElementById(id).options[i].style.display = 'list-item';
+          document.getElementById(id).options[i].disabled = false;
+        } else {
+          document.getElementById(id).options[i].style.display = 'none';
+          document.getElementById(id).options[i].disabled = true;
+        }
+      }
+      for (var i = 1; i < document.getElementById(id).length; i++) {
+        var random = true;
+        if (document.getElementById(id).options[i].disabled !== true) {
+          document.getElementById(id).selectedIndex = i;
+          random = false;
+          i = document.getElementById(id).length;
+        }
+      }
+      if (random) {
+        document.getElementById(id).selectedIndex = 0;
+      }
+    }
+    function toggleAnswers() {
+      if (question[0]) {
+        if (showingAnswers) {
+          for (var i = 0; i < totalQuestions; i++) {
+            var el = document.getElementById('a' + i);
+            el.innerHTML = "<span class='q-number'>" + (i + 1) + ")</span> <span class='q-content'>" + stripLatex(question[i].question) + " =</span>";
+            question[i].showingQuestion = true;
+          }
+          answerButton.innerHTML = "Show Answers";
+          showingAnswers = false;
+        } else {
+          for (var i = 0; i < totalQuestions; i++) {
+            var el = document.getElementById('a' + i);
+            el.innerHTML = "<span class='q-number'>" + (i + 1) + ")</span> <span class='q-content'>" + stripLatex(question[i].answer) + "</span>";
+            question[i].showingQuestion = false;
+          }
+          answerButton.innerHTML = "Show Questions";
+          showingAnswers = true;
+        }
+      }
+      MathJax.typesetPromise();
+    }
+    function refreshQuestion(col, i) {
+      var min = parseInt(document.getElementById("level0Min").value);
+      var max = parseInt(document.getElementById("level0Max").value);
+      var step = (max - min) / (totalQuestions);
+      var level = Math.floor(min + step * i / columns);
+      if (level < 0) {
+        level = 0;
+      }
+      if (level > 10) {
+        level = 10;
+      }
+      getQuestion(document.getElementById("topic0").value, level / 10);
+      question[i] = question[question.length - 1];
+      question.pop();
+      var attempts = 0;
+      do {
+        var repeat = false;
+        for (var k = 0; k < totalQuestions * columns; k++) {
+          if (i !== k && question[i].answer === question[k].answer) {
+            repeat = true;
+          }
+        }
+        if (repeat) {
+          getQuestion(document.getElementById("topic0").value, level / 10);
+          question[i] = question[question.length - 1];
+          question.pop();
+          attempts++;
+          if (attempts % 30 === 0) {
+            level++;
+          }
+        }
+      } while (repeat === true && attempts < 100);
+      toggleAnswer(i);
+    }
+    setUp();
+  </script>
+</body>
+
+</html>
