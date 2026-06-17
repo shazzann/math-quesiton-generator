@@ -1855,7 +1855,8 @@
           var randomSelect = document.getElementById("randomTopics");
           if (randomSelect && randomSelect.selectedOptions.length > 0) {
             var opts = Array.from(randomSelect.selectedOptions);
-            chosenTopic = opts[Math.floor(Math.random() * opts.length)].value;
+            var topicIndex = Math.floor(i * opts.length / totalQuestions);
+            chosenTopic = opts[topicIndex].value;
           }
         }
         getQuestion(chosenTopic, level / 10);
@@ -1870,14 +1871,7 @@
             }
           }
           if (repeat) {
-            var retryTopic = document.getElementById("topic0").value;
-            if (retryTopic == "0") {
-              var randomSelect = document.getElementById("randomTopics");
-              if (randomSelect && randomSelect.selectedOptions.length > 0) {
-                var opts = Array.from(randomSelect.selectedOptions);
-                retryTopic = opts[Math.floor(Math.random() * opts.length)].value;
-              }
-            }
+            var retryTopic = chosenTopic;
             getQuestion(retryTopic, level / 10);
             question[newlyAdded] = question[question.length - 1];
             question.pop();

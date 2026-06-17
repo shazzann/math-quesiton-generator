@@ -927,7 +927,7 @@ function oneStepEquations(type, x, answer, inequality) {
             break;
     }
     side2 = roundError(side2);
-    problem.question = "<div>Solve:</div><div>" + "\\(";
+    problem.question = "<div></div><div>" + "\\(";
     if (Math.random() < 0.5 || inequality) {
         problem.question += side1 + " " + symbol + " " + side2;
     } else {
@@ -1006,7 +1006,7 @@ function twoStepEquations(type, x, y, answer, inequality) {
             break;
     }
     side2 = roundError(side2);
-    problem.question = "<div>Solve:</div><div>" + "\\(";
+    problem.question = "<div></div><div>" + "\\(";
     if (Math.random() < 0.5 || inequality) {
         problem.question += side1 + " " + symbol + " " + side2;
     } else {
@@ -1101,7 +1101,7 @@ function equationsWithBracketsBoth(a, b, c, d, e, f, answer, reversable) {
         side1 = fixTerm(a, "", true) + "(" + fixTerm(b, letter, true) + fixTerm(c, "", false) + ")";
     }
     side2 = fixTerm(d, "", true) + "(" + fixTerm(e, letter, true) + fixTerm(f, "", false) + ")";
-    problem.question = "<div>Solve:</div><div>" + "\\(";
+    problem.question = "<div></div><div>" + "\\(";
     if (Math.random() < 0.5 && reversable) {
         problem.question += side2 + " = " + side1;
     } else {
@@ -2545,7 +2545,7 @@ function equationsWithRatio(co, a, b, c, den) {
         var r2 = b + ":" + c;
         var answer = a;
     }
-    problem.question = "<div>Solve:</div>";
+    problem.question = "<div></div>";
     if (toss()) {
         problem.question += "<div>\\( " + r1 + " = " + r2 + "\\)</div>";
     } else {
@@ -3252,7 +3252,7 @@ function solvingQuadraticFactorise(a, b, c, d) {
     var exp = fixTerm(co[0], let + "^2", true);
     exp += fixTerm(co[1], let, false);
     exp += fixTerm(co[2], "", false);
-    problem.question = "<div>Solve:</div><div>\\(" + exp + " = 0\\)</div>";
+    problem.question = "<div></div><div>\\(" + exp + " = 0\\)</div>";
     problem.answer = "\\(x = " + Math.round(100 * (-b) / a) / 100 + ", x = " + Math.round(100 * (-d) / c) / 100 + "\\)";
     return problem;
 }
