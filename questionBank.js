@@ -540,10 +540,10 @@ function hcf(x, y, z, decomp) {
     var problem = {};
     if (!decomp) {
         if (z) {
-            problem.question = "பொ.கா.பெ:  " + x + ", " + y + " , "+ z ;
+            problem.question = "பொ.கா.பெ:  " + x + ", " + y + " , " + z;
             problem.answer = HCF(HCF(x, y), z);
         } else {
-            problem.question = "பொ.கா.பெ:  " + x + " , "+ y ;
+            problem.question = "பொ.கா.பெ:  " + x + " , " + y;
             problem.answer = HCF(x, y);
         }
     } else {
@@ -567,10 +567,10 @@ function lcm(x, y, z, decomp) {
     if (!decomp) {
         if (z) {
             var temp = x * y / (HCF(x, y));
-            problem.question = "பொ.ம.சி:  " + x + ", " + y + " , " + z ;
+            problem.question = "பொ.ம.சி:  " + x + ", " + y + " , " + z;
             problem.answer = temp * z / HCF(temp, z);
         } else {
-            problem.question = "பொ.ம.சி:  " + x + " , " + y ;
+            problem.question = "பொ.ம.சி:  " + x + " , " + y;
             problem.answer = x * y / (HCF(x, y));
         }
     } else {
@@ -1053,7 +1053,7 @@ function threeStepEquations(x, y, z, answer, reversable, inequality) {
     } else {
         side2 = fixTerm(y, letter, true) + fixTerm(roundError(x * answer + z), "", false);
     }
-    problem.question = "<div>Solve:</div><div>" + "\\(";
+    problem.question = "<div></div><div>" + "\\(";
     if ((reversable && Math.random() < 0.5) || inequality) {
         problem.question += side1 + " " + symbol + " " + side2;
     } else {
@@ -1079,7 +1079,7 @@ function equationsWithBrackets(x, y, z, answer, reversable) {
         side1 = fixTerm(x, "", true) + "(" + fixTerm(y, letter, true) + fixTerm(z, "", false) + ")";
     }
     side2 = roundError(x * (y * answer + z));
-    problem.question = "<div>Solve:</div><div>\\(";
+    problem.question = "<div></div><div>\\(";
     if (Math.random() < 0.5 && reversable) {
         problem.question += side2 + " = " + side1;
     } else {
@@ -1176,8 +1176,8 @@ function equationsIfThen(type, a, b, rhs) {
     var answer = e2 + "=" + ans;
     e2 += "=\\text{ }?";
 
-    problem.question = "<div>If \\(" + e1 + "\\),</div>";
-    problem.question += "<div>then \\(" + e2 + "\\)</div>";
+    problem.question = "<div> \\(" + e1 + "\\),</div>";
+    problem.question += "<div>\\(" + e2 + "\\)</div>";
     problem.answer = "\\(" + answer + "\\)";
     return problem;
 }
