@@ -71,19 +71,15 @@
 
     /* Numbered question list styles */
     .question-list {
-      display: flex;
-      flex-direction: row;
+      column-width: 14em;
+      column-gap: 2em;
       list-style: none;
       padding: 0.5em 1em;
       margin: 1em auto;
       background: #fff;
       max-width: 100%;
-      gap: 2em;
-    }
-
-    .question-column {
-      flex: 1;
-      min-width: 0;
+      height: 25cm; /* Fixed height to force column wrapping */
+      overflow-x: auto;
     }
 
     .question-item {
@@ -119,11 +115,42 @@
       background: #388E3C;
     }
 
+    .custom-heading {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 2em;
+    }
+
+    .custom-frac {
+      display: inline-block !important;
+      vertical-align: middle !important;
+      text-align: center !important;
+      margin: 0 0.2em !important;
+      font-size: 0.9em !important;
+    }
+    .custom-frac-num {
+      display: block !important;
+      padding: 0.1em !important;
+      line-height: 1 !important;
+    }
+    .custom-frac-den {
+      display: block !important;
+      padding: 0.1em !important;
+      line-height: 1 !important;
+      border-top: 1px solid black !important;
+    }
+
     /* Print media query: hide everything except questions */
     @media print {
-      @page {
-        margin: 0;
+      body {
+        padding: 0;
       }
+
+      .question-list {
+        height: auto; /* Let the printer handle page breaks natively */
+        overflow: visible;
+      }
+
       body {
         padding: 1cm;
       }
@@ -884,6 +911,8 @@
       <label for="columnSelect">Columns:</label>
       <label for="fontSize">Font Size:</label>
       <input id="fontSize" oninput="displayQuestions()" value="20" min="8" max="48" type="number">
+      <label for="customHeading" style="margin-left: 10px;">Print Heading:</label>
+      <input type="text" id="customHeading" placeholder="Custom Print Heading (Optional)" style="width:220px;">
     </div>
     <div>
       <button onclick="createSheet()">Create Questions</button>
@@ -1072,6 +1101,11 @@
               <option value="153">169. Trigonometry: Finding the area of a right-angled triangle</option>
               <option value="154">170. Trigonometry: Finding the perimeter of a right-angled triangle</option>
             </select></div>
+          <div id="randomTopicsContainer" style="margin-top: 10px; display: none;">
+            <label style="display:block;margin-bottom:5px;">Select Topics to Randomise Between (Hold Ctrl/Cmd to select
+              multiple. Leave blank for all):</label>
+            <select id="randomTopics" multiple size="8" style="width: 100%;"></select>
+          </div>
           <h3>Difficulty</h3><label for="level0Min">Min:</label><input oninput="topicToUrl()" class="level"
             type="number" id="level0Min" value="0" min="0" max="10"><label for="level0Max">Max:</label><input
             oninput="topicToUrl()" class="level" type="number" id="level0Max" value="10" min="0" max="10">
@@ -1622,6 +1656,7 @@
       </div>
 
   </section>
+  <h1 id="printHeadingDisplay" class="custom-heading" style="display: none;"></h1>
   <section id="questionsIWB">
 
   </section>
@@ -1660,9 +1695,23 @@
       var t3 = "id3=" + document.getElementById('topic3').value;
       t3 += "&min3=" + document.getElementById('level3Min').value;
       t3 += "&max3=" + document.getElementById('level3Max').value;
+      var randomContainer = document.getElementById('randomTopicsContainer');
+      if (randomContainer) {
+        randomContainer.style.display = (document.getElementById('topic0').value == "0") ? "block" : "none";
+      }
       window.history.replaceState(null, null, "?" + t0 + "&" + t1 + "&" + t2 + "&" + t3);
     }
     function setUp() {
+      var origSelect = document.getElementById('topic0');
+      var randSelect = document.getElementById('randomTopics');
+      for (var i = 1; i < origSelect.options.length; i++) {
+        randSelect.appendChild(origSelect.options[i].cloneNode(true));
+      }
+      var randomContainer = document.getElementById('randomTopicsContainer');
+      if (randomContainer) {
+        randomContainer.style.display = (origSelect.value == "0") ? "block" : "none";
+      }
+
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
       const id0 = urlParams.get('id0');
@@ -1730,12 +1779,14 @@
       s = s.replace(/\\lt/g, '<');
       s = s.replace(/\\gt/g, '>');
       s = s.replace(/\\cdot/g, '·');
-      // Handle fractions: \frac{a}{b} -> a/b
-      s = s.replace(/\\frac\{([^}]*)\}\{([^}]*)\}/g, '$1/$2');
-      // Handle superscripts: ^{n} -> ^n
-      s = s.replace(/\^\{([^}]*)\}/g, '^$1');
-      // Handle subscripts: _{n} -> _n
-      s = s.replace(/_\{([^}]*)\}/g, '_$1');
+      // Handle fractions: \frac{a}{b} -> vertical HTML fraction
+      s = s.replace(/\\frac\{([^}]*)\}\{([^}]*)\}/g, '<span class="custom-frac"><span class="custom-frac-num">$1</span><span class="custom-frac-den">$2</span></span>');
+      // Handle superscripts: ^{n} -> <sup>n</sup>, ^n -> <sup>n</sup>
+      s = s.replace(/\^\{([^}]*)\}/g, '<sup>$1</sup>');
+      s = s.replace(/\^([a-zA-Z0-9])/g, '<sup>$1</sup>');
+      // Handle subscripts: _{n} -> <sub>n</sub>, _n -> <sub>n</sub>
+      s = s.replace(/_\{([^}]*)\}/g, '<sub>$1</sub>');
+      s = s.replace(/_([a-zA-Z0-9])/g, '<sub>$1</sub>');
       // Remove \text{} wrapper
       s = s.replace(/\\text\{([^}]*)\}/g, '$1');
       // Remove \sqrt{} -> √()
@@ -1750,8 +1801,12 @@
       s = s.replace(/\\/g, '');
       // Clean up extra spaces
       s = s.replace(/\s+/g, ' ').trim();
-      // Remove HTML tags
-      s = s.replace(/<[^>]*>/g, '');
+      
+      // Convert adjacent div tags to spaces to keep things inline
+      s = s.replace(/<\/div>\s*<div[^>]*>/g, ' ');
+      // Remove all remaining div tags to prevent block-level line breaks
+      s = s.replace(/<\/?div[^>]*>/g, '');
+
       // Decode HTML entities
       var tmp = document.createElement('textarea');
       tmp.innerHTML = s;
@@ -1772,7 +1827,7 @@
       }
       showingAnswers = false;
       answerButton.innerHTML = "Show Answers";
-      var data = "<div class='question-list'><div class='question-column'>";
+      var data = "<div class='question-list'>";
       for (var i = 0; i < totalQuestions; i++) {
         var min = parseInt(document.getElementById("level0Min").value);
         var max = parseInt(document.getElementById("level0Max").value);
@@ -1784,7 +1839,15 @@
         if (level > 10) {
           level = 10;
         }
-        getQuestion(document.getElementById("topic0").value, level / 10);
+        var chosenTopic = document.getElementById("topic0").value;
+        if (chosenTopic == "0") {
+          var randomSelect = document.getElementById("randomTopics");
+          if (randomSelect && randomSelect.selectedOptions.length > 0) {
+            var opts = Array.from(randomSelect.selectedOptions);
+            chosenTopic = opts[Math.floor(Math.random() * opts.length)].value;
+          }
+        }
+        getQuestion(chosenTopic, level / 10);
         var attempts = 0;
         do {
           var repeat = false;
@@ -1796,7 +1859,15 @@
             }
           }
           if (repeat) {
-            getQuestion(document.getElementById("topic0").value, level / 10);
+            var retryTopic = document.getElementById("topic0").value;
+            if (retryTopic == "0") {
+              var randomSelect = document.getElementById("randomTopics");
+              if (randomSelect && randomSelect.selectedOptions.length > 0) {
+                var opts = Array.from(randomSelect.selectedOptions);
+                retryTopic = opts[Math.floor(Math.random() * opts.length)].value;
+              }
+            }
+            getQuestion(retryTopic, level / 10);
             question[newlyAdded] = question[question.length - 1];
             question.pop();
             attempts++;
@@ -1806,15 +1877,21 @@
           }
         } while (repeat === true && attempts < 300);
         question[(question.length - 1)].showingQuestion = true;
-        if (i > 0 && i % 25 === 0) {
-          data += "</div><div class='question-column'>";
-        }
         data += "<div class='question-item' style='font-size:" + parseInt(fontSize.value) + "px;' onclick='toggleAnswer(" + (question.length - 1) + ")' id='a" + (question.length - 1) + "'>";
         data += "<span class='q-number'>" + (i + 1) + ")</span> ";
         data += "<span class='q-content'>" + stripLatex(question[question.length - 1].question) + " =</span>";
         data += "</div>";
       }
-      data += "</div></div>";
+      data += "</div>";
+      var headingText = document.getElementById('customHeading') ? document.getElementById('customHeading').value : "";
+      if (document.getElementById('printHeadingDisplay')) {
+        document.getElementById('printHeadingDisplay').innerText = headingText;
+        if (headingText.trim() !== "") {
+          document.getElementById('printHeadingDisplay').style.display = "block";
+        } else {
+          document.getElementById('printHeadingDisplay').style.display = "none";
+        }
+      }
       document.getElementById('questionsIWB').innerHTML = data;
       document.getElementById('questionsIWB').style.display = "block";
       document.getElementById('answerButton').style.display = "inline-block";
@@ -1824,17 +1901,23 @@
       MathJax.typesetPromise();
     }
     function displayQuestions() {
-      var data = "<div class='question-list'><div class='question-column'>";
+      var data = "<div class='question-list'>";
       for (var i = 0; i < totalQuestions; i++) {
-        if (i > 0 && i % 25 === 0) {
-          data += "</div><div class='question-column'>";
-        }
         data += "<div class='question-item' style='font-size:" + parseInt(fontSize.value) + "px;' onclick='toggleAnswer(" + i + ")' id='a" + i + "'>";
         data += "<span class='q-number'>" + (i + 1) + ")</span> ";
         data += "<span class='q-content'>" + stripLatex(question[i].question) + " =</span>";
         data += "</div>";
       }
-      data += "</div></div>";
+      data += "</div>";
+      var headingText = document.getElementById('customHeading') ? document.getElementById('customHeading').value : "";
+      if (document.getElementById('printHeadingDisplay')) {
+        document.getElementById('printHeadingDisplay').innerText = headingText;
+        if (headingText.trim() !== "") {
+          document.getElementById('printHeadingDisplay').style.display = "block";
+        } else {
+          document.getElementById('printHeadingDisplay').style.display = "none";
+        }
+      }
       document.getElementById('questionsIWB').innerHTML = data;
       MathJax.typesetPromise();
     }
@@ -1843,6 +1926,9 @@
     }
     function showMenu() {
       document.getElementById('questionsIWB').style.display = "none";
+      if (document.getElementById('printHeadingDisplay')) {
+        document.getElementById('printHeadingDisplay').style.display = "none";
+      }
       document.getElementById('topicMenu').style.display = "block";
       document.getElementById('answerButton').style.display = "none";
       document.getElementById('menuButton').style.display = "none";

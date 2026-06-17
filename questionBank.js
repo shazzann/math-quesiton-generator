@@ -376,7 +376,7 @@ function convertFDP(type, num, den) {
 function collectingTerms(letters, variables, coeff, mixed) {
     var problem = {};
     var totalTerms = coeff.length;
-    problem.question = "<div>Simplify fully</div><div>\\(";
+    problem.question = "<div></div><div>\\(";
     for (var i = 0; i < totalTerms; i++) {
         if (coeff[i] > 0 && i > 0) {
             problem.question += " + ";
@@ -438,7 +438,7 @@ function multiplyingTerms(type, negatives) {
             c[i] = -c[i];
         }
     }
-    problem.question = "<div>Simplify fully</div><div>\\(";
+    problem.question = "<div></div><div>\\(";
     if (type > 5) {
         type = 5;
     }
@@ -540,10 +540,10 @@ function hcf(x, y, z, decomp) {
     var problem = {};
     if (!decomp) {
         if (z) {
-            problem.question = "Find the highest common factor of " + x + ", " + y + " and " + z + ".";
+            problem.question = "பொ.கா.பெ:  " + x + ", " + y + " , "+ z ;
             problem.answer = HCF(HCF(x, y), z);
         } else {
-            problem.question = "Find the highest common factor of " + x + " and " + y + ".";
+            problem.question = "பொ.கா.பெ:  " + x + " , "+ y ;
             problem.answer = HCF(x, y);
         }
     } else {
@@ -551,12 +551,12 @@ function hcf(x, y, z, decomp) {
             problem.question = "<div>\\(A = " + primeFactors(x, true) + "\\)</div>";
             problem.question += "<div>\\(B = " + primeFactors(y, true) + "\\)</div>";
             problem.question += "<div>\\(C = " + primeFactors(z, true) + "\\)</div>";
-            problem.question += "Find the highest common factor of A, B and C.";
+            problem.question += "பொ.கா.பெ:  A, B , C";
             problem.answer = HCF(HCF(x, y), z);
         } else {
             problem.question = "<div>\\(A = " + primeFactors(x, true) + "\\)</div>";
             problem.question += "<div>\\(B = " + primeFactors(y, true) + "\\)</div>";
-            problem.question += "Find the highest common factor of A and B.";
+            problem.question += "பொ.கா.பெ:  A , B";
             problem.answer = HCF(x, y);
         }
     }
@@ -567,10 +567,10 @@ function lcm(x, y, z, decomp) {
     if (!decomp) {
         if (z) {
             var temp = x * y / (HCF(x, y));
-            problem.question = "Find the lowest common multiple of " + x + ", " + y + " and " + z + ".";
+            problem.question = "பொ.ம.சி:  " + x + ", " + y + " , " + z ;
             problem.answer = temp * z / HCF(temp, z);
         } else {
-            problem.question = "Find the lowest common multiple of " + x + " and " + y + ".";
+            problem.question = "பொ.ம.சி:  " + x + " , " + y ;
             problem.answer = x * y / (HCF(x, y));
         }
     } else {
@@ -579,12 +579,12 @@ function lcm(x, y, z, decomp) {
             problem.question = "<div>\\(A = " + primeFactors(x, true) + "\\)</div>";
             problem.question += "<div>\\(B = " + primeFactors(y, true) + "\\)</div>";
             problem.question += "<div>\\(C = " + primeFactors(z, true) + "\\)</div>";
-            problem.question += "Find the lowest common multiple of A, B and C.";
+            problem.question += "பொ.ம.சி:  A, B , C";
             problem.answer = temp * z / HCF(temp, z);
         } else {
             problem.question = "<div>\\(A = " + primeFactors(x, true) + "\\)</div>";
             problem.question += "<div>\\(B = " + primeFactors(y, true) + "\\)</div>";
-            problem.question += "Find the lowest common multiple of A and B.";
+            problem.question += "பொ.ம.சி:  A , B";
             problem.answer = x * y / (HCF(x, y));
         }
     }
@@ -609,7 +609,7 @@ function simplifyingRatios(terms, maxPrime) {
         }
         ratio[1] = simplifiedRatio[1] * multiplier;
     }
-    problem.question = "<div>Simplify fully</div><div>\\(";
+    problem.question = "<div></div><div>\\(";
     problem.answer = "<div>\\(";
     problem.typedAnswer = "";
     for (i = 0; i < ratio.length - 1; i++) {
@@ -630,7 +630,7 @@ function simplifyingFractions(maxPrime) {
         denominator = getRandom(1, maxPrime);
     }
     var multiplier = Math.max(2, getRandom(maxPrime / 4, maxPrime));
-    problem.question = "Simplify fully \\( \\frac{" + numerator * multiplier + "}{" + denominator * multiplier + "} \\)";
+    problem.question = " \\( \\frac{" + numerator * multiplier + "}{" + denominator * multiplier + "} \\)";
     problem.answer = "\\( \\frac{" + numerator + "}{" + denominator + "}\\)";
     problem.typedAnswer = numerator + "/" + denominator;
     return problem;
@@ -1242,7 +1242,7 @@ function tableBonds(type, a, b, c, d) {
     return problem;
 }
 function fourOpsFractions(w1, n1, d1, w2, n2, d2, w3, n3, d3, o1, o2) {
-// w = whole, n = numerator, d = denominator, o = operation, a = answer
+    // w = whole, n = numerator, d = denominator, o = operation, a = answer
     var problem = {};
     if (w1 === 0) {
         w1 = "";
@@ -1528,7 +1528,7 @@ function convertingFractions(num, den, toMixed) {
     return problem;
 }
 function convertingMetricLength(m, from, to) {
-//0, 1, 2, 3 -> mm, cm, m, km
+    //0, 1, 2, 3 -> mm, cm, m, km
     var problem = {};
     var unit = new Array("mm", "cm", "m", "km");
     var cm = roundError(m * 100);
@@ -1554,7 +1554,7 @@ function convertingMetricLength(m, from, to) {
     return problem;
 }
 function convertingMetricWeight(kg, from, to) {
-//0, 1, 2, 3 -> mg, g, kg, tonnes
+    //0, 1, 2, 3 -> mg, g, kg, tonnes
     var problem = {};
     var unit = new Array("mg", "g", "kg", "tonnes");
     var g = roundError(kg * 1000);
@@ -1580,7 +1580,7 @@ function convertingMetricWeight(kg, from, to) {
     return problem;
 }
 function convertingMetricVolume(l, from, to) {
-//0, 1, 2 -> l, cl, l
+    //0, 1, 2 -> l, cl, l
     var problem = {};
     var unit = new Array("ml", "cl", "l");
     var cl = roundError(l * 100);
@@ -1699,7 +1699,7 @@ function substitution(type, negatives, v1, v2) {
             problem.question += ", evaluate:</div><div>";
             break;
         case 2:
-            problem.question += ", calculate:</div><div>";
+            problem.question += ",</div><div>";
             break;
     }
     switch (type) {
@@ -1830,44 +1830,44 @@ function changingTemperatures(original, change) {
 function polygonSides(maxPol) {
     var problem = {};
     var polygon = [];
-    polygon.push({name: "a triangle", sides: 3});
-    polygon.push({name: "an equilateral triangle", sides: 3});
-    polygon.push({name: "an isosceles triangle", sides: 3});
-    polygon.push({name: "a scalene triangle", sides: 3});
-    polygon.push({name: "a quadrilateral", sides: 4});
-    polygon.push({name: "a square", sides: 4});
-    polygon.push({name: "a rectangle", sides: 4});
-    polygon.push({name: "a parallelogram", sides: 4});
-    polygon.push({name: "a rhombus", sides: 4});
-    polygon.push({name: "a trapezium", sides: 4});
-    polygon.push({name: "a kite", sides: 4});
-    polygon.push({name: "a pentagon", sides: 5});
-    polygon.push({name: "a hexagon", sides: 6});
-    polygon.push({name: "a heptagon", sides: 7});
-    polygon.push({name: "an octagon", sides: 8});
-    polygon.push({name: "a nonagon", sides: 9});
-    polygon.push({name: "a decagon", sides: 10});
-    polygon.push({name: "a hendecagon", sides: 11});
-    polygon.push({name: "a dodecagon", sides: 12});
-    polygon.push({name: "a tridecagon", sides: 13});
-    polygon.push({name: "a tetradecagon", sides: 14});
-    polygon.push({name: "a pentadecagon", sides: 15});
-    polygon.push({name: "a hexadecagon", sides: 16});
-    polygon.push({name: "a heptadecagon", sides: 17});
-    polygon.push({name: "a octadecagon", sides: 18});
-    polygon.push({name: "a enneadecagon", sides: 19});
-    polygon.push({name: "an icosagon", sides: 20});
-    polygon.push({name: "a triacontagon", sides: 30});
-    polygon.push({name: "a tetracontagon", sides: 40});
-    polygon.push({name: "a pentacontagon", sides: 50});
-    polygon.push({name: "a hexacontagon", sides: 60});
-    polygon.push({name: "a heptacontagon", sides: 70});
-    polygon.push({name: "an octacontagon", sides: 80});
-    polygon.push({name: "an enneacontagon", sides: 90});
-    polygon.push({name: "a hectogon", sides: 100});
-    polygon.push({name: "a chiliagon", sides: 1000});
-    polygon.push({name: "a myriagon", sides: 10000});
-    polygon.push({name: "a megagon", sides: 1000000});
+    polygon.push({ name: "a triangle", sides: 3 });
+    polygon.push({ name: "an equilateral triangle", sides: 3 });
+    polygon.push({ name: "an isosceles triangle", sides: 3 });
+    polygon.push({ name: "a scalene triangle", sides: 3 });
+    polygon.push({ name: "a quadrilateral", sides: 4 });
+    polygon.push({ name: "a square", sides: 4 });
+    polygon.push({ name: "a rectangle", sides: 4 });
+    polygon.push({ name: "a parallelogram", sides: 4 });
+    polygon.push({ name: "a rhombus", sides: 4 });
+    polygon.push({ name: "a trapezium", sides: 4 });
+    polygon.push({ name: "a kite", sides: 4 });
+    polygon.push({ name: "a pentagon", sides: 5 });
+    polygon.push({ name: "a hexagon", sides: 6 });
+    polygon.push({ name: "a heptagon", sides: 7 });
+    polygon.push({ name: "an octagon", sides: 8 });
+    polygon.push({ name: "a nonagon", sides: 9 });
+    polygon.push({ name: "a decagon", sides: 10 });
+    polygon.push({ name: "a hendecagon", sides: 11 });
+    polygon.push({ name: "a dodecagon", sides: 12 });
+    polygon.push({ name: "a tridecagon", sides: 13 });
+    polygon.push({ name: "a tetradecagon", sides: 14 });
+    polygon.push({ name: "a pentadecagon", sides: 15 });
+    polygon.push({ name: "a hexadecagon", sides: 16 });
+    polygon.push({ name: "a heptadecagon", sides: 17 });
+    polygon.push({ name: "a octadecagon", sides: 18 });
+    polygon.push({ name: "a enneadecagon", sides: 19 });
+    polygon.push({ name: "an icosagon", sides: 20 });
+    polygon.push({ name: "a triacontagon", sides: 30 });
+    polygon.push({ name: "a tetracontagon", sides: 40 });
+    polygon.push({ name: "a pentacontagon", sides: 50 });
+    polygon.push({ name: "a hexacontagon", sides: 60 });
+    polygon.push({ name: "a heptacontagon", sides: 70 });
+    polygon.push({ name: "an octacontagon", sides: 80 });
+    polygon.push({ name: "an enneacontagon", sides: 90 });
+    polygon.push({ name: "a hectogon", sides: 100 });
+    polygon.push({ name: "a chiliagon", sides: 1000 });
+    polygon.push({ name: "a myriagon", sides: 10000 });
+    polygon.push({ name: "a megagon", sides: 1000000 });
     temp = getRandom(0, maxPol);
     problem.question = "<div>How many sides does " + polygon[temp].name + " have?</div>";
     problem.answer = polygon[temp].sides;
@@ -1942,7 +1942,7 @@ function expandSimplifySingleBrackets(type, max) {
             }
             break;
     }
-    problem.question = "<div>Expand and simplify</div><div>" + "\\(" + exp + "\\)</div>";
+    problem.question = "<div></div><div>" + "\\(" + exp + "\\)</div>";
     problem.answer = "\\(" + expansion + "\\)";
     return problem;
 }
@@ -2219,10 +2219,10 @@ function factoriseExpandQuadratics(a, b, c, d, expanding) {
     }
     fact += ")";
     if (!expanding) {
-        problem.question = "<div>Factorise:</div><div>\\(" + exp + "\\)</div>";
+        problem.question = "<div></div><div>\\(" + exp + "\\)</div>";
         problem.answer = "\\(" + fact + "\\)";
     } else {
-        problem.question = "<div>Expand and simplify</div><div>\\(" + fact + "\\)</div>";
+        problem.question = "<div></div><div>\\(" + fact + "\\)</div>";
         problem.answer = "\\(" + exp + "\\)";
     }
     return problem;
@@ -2522,11 +2522,11 @@ function factoriseSingle(hcf, totalTerms, variables, max, expand) {
     }
     factorisation += ")";
     if (expand) {
-        problem.question = "<div>Expand:</div>";
+        problem.question = "<div></div>";
         problem.question += "<div>\\(" + factorisation + "\\)</div>";
         problem.answer = "<div>\\(" + expression + "\\)</div>";
     } else {
-        problem.question = "<div>Factorise fully:</div>";
+        problem.question = "<div></div>";
         problem.question += "<div>\\(" + expression + "\\)</div>";
         problem.answer = "<div>\\(" + factorisation + "\\)</div>";
     }
@@ -2935,10 +2935,10 @@ function addingSurds(minSeed, maxSeed, subtraction) {
     var square1 = root1 * root1;
     var square2 = root2 * root2;
     if (!subtraction) {
-        problem.question = "<div>Simplify fully</div><div>\\( \\sqrt{" + (square1 * seed) + "} + \\sqrt{" + (square2 * seed) + "}\\)</div>";
+        problem.question = "<div></div><div>\\( \\sqrt{" + (square1 * seed) + "} + \\sqrt{" + (square2 * seed) + "}\\)</div>";
         problem.answer = "\\(" + (root1 + root2) + "\\sqrt{" + seed + "}\\)";
     } else {
-        problem.question = "<div>Simplify fully</div><div>\\(\\sqrt{" + (square1 * seed) + "} - \\sqrt{" + (square2 * seed) + "}\\)</div>";
+        problem.question = "<div></div><div>\\(\\sqrt{" + (square1 * seed) + "} - \\sqrt{" + (square2 * seed) + "}\\)</div>";
         problem.answer = "\\(" + (root1 - root2) + "\\sqrt{" + seed + "}\\)";
     }
     return problem;
@@ -3144,7 +3144,7 @@ function rewriteAsSum(n, maxSum, maxTerm, mixed, evaluate, addition) {
     addCalc += "\\)";
     mixCalc += "\\)";
     if (evaluate) {
-        problem.question = "<div>Calculate:</div>";
+        problem.question = "<div></div>";
     } else {
         problem.question = "<div>Rewrite this calculation as a sum.</div>";
     }
